@@ -9,6 +9,12 @@ export interface IBaseStyles {
   [propName: string]: React.CSSProperties;
 }
 
+export interface IBaseStyledProps {
+  style?: React.CSSProperties;
+  className?: string;
+  [prop: string]: any;
+}
+
 export interface IBaseTheme {
   [prop: string]: any;
 }

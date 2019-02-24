@@ -7,7 +7,6 @@ import {
 } from 'mobx-state-tree';
 
 import React from 'react';
-import { pick } from 'ide-lib-utils';
 import { debugModel } from '../../lib/debug';
 import { IBaseStyles, IBaseTheme } from '../index';
 
