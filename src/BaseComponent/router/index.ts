@@ -1,5 +1,4 @@
 export * from './del'
 export * from './get'
-export * from './helper'
 export * from './post'
 export * from './put'

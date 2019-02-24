@@ -34,6 +34,7 @@ const StyleModel = types
   });
 
 
+export type TBaseControlledKeys = 'styles' | 'theme';
 
 // 定义被 store 控制的 model key 的列表，没法借用 ts 的能力动态从 TLibUtilsControlledKeys 中获取
 export const BASE_CONTROLLED_KEYS: string[] = [
@@ -76,14 +77,6 @@ export const BaseModel = types
 
       get theme() {
         return self._theme.toJSON();
-      },
-
-      /**
-       * 只返回当前模型的属性，可以通过 filter 字符串进行属性项过滤
-       */
-      allAttibuteWithFilter(filterArray: string | string[] = BASE_CONTROLLED_KEYS) {
-        const filters = [].concat(filterArray || []);
-        return pick(self, filters);
       }
     };
   })

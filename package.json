@@ -67,12 +67,9 @@
     "webpack-dev-server": "^3.1.10",
     "webpack-merge": "^4.1.4"
   },
-  "dependencies": {
-    "debug": "^4.1.0",
-    "ide-lib-utils": "^0.1.1",
-    "polished": "^2.3.3"
-  },
+  "dependencies": {},
   "peerDependencies": {
+    "ide-lib-utils": "0.x",
     "ette": "0.x",
     "ette-proxy": "0.x",
     "ette-router": "0.x",

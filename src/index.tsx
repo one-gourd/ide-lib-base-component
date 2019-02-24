@@ -14,3 +14,5 @@ export * from './BaseComponent/schema/util';
 
 export * from './BaseComponent/router/';
 export * from './BaseComponent/controller/util';
+
+export * from './BaseComponent/styles';

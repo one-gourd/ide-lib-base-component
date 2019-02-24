@@ -31,7 +31,7 @@ export interface IBaseComponentProps {
 };
 
 
-export const DEFAULT_PROPS: Partial<IBaseComponentProps> = {
+export const DEFAULT_PROPS: IBaseComponentProps = {
   theme: {
   },
   styles: {
@@ -50,10 +50,10 @@ export const based = (WrappedComponent: React.SFC<IBaseComponentProps>) => {
   const BaseComponent = function (props: IBaseComponentProps) {
     // const { SchemaTreeComponent } = subComponents;
     const mergedProps = Object.assign({}, DEFAULT_PROPS, props);
-    const { styles, theme } = mergedProps;
+    const { theme } = mergedProps;
 
     return <ThemeProvider theme={theme}>
-      <WrappedComponent {...props} styles={styles} />
+      <WrappedComponent {...props} />
     </ThemeProvider>
   }
 
