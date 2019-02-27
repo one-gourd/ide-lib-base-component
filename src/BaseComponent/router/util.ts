@@ -13,12 +13,12 @@ import { isExist } from 'ide-lib-utils';
  */
 export function buildNormalResponse(ctx: IContext, status = 200, data: any, message = 'SUCCESS') {
     ctx.response.status = status;
-    ctx.response.body = Object.assign({
+    ctx.response.body = {
         api: ctx._matchedRoute || 'unknown',
         apiName: ctx._matchedRouteName || 'unknown',
         request: ctx.request.toJSON(),
-        data: Object.assign({}, data || {}),
+        data: data || {},
         success: isExist(data), // 如果有数据则为 true，不论数据内容长什么样
         message: message
-    });
+    };
 }
