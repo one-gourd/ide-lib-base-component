@@ -11,8 +11,6 @@ interface IRewrite {
     [prop: string]: string;
 }
 
-console.log(777, debugIO);
-
 /**
  * 挂载 stores 、innerApps 到上下文中，注意这里的 next 必须要使用 async，否则 proxy 的时候将出现异步偏差
  * @param stores - store 模型

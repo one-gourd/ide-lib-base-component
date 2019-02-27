@@ -1,10 +1,11 @@
+import { IContext } from 'ette';
 import { isPlainObject, getValueByPath } from "ide-lib-utils";
 
 /**
  * 更新 styles 的 ette 中间件
  * @param stylesModelPath - stores 中 style model 的路径
  */
-export const updateStylesMiddleware = (stylesModelPath: string) => (ctx: any) => {
+export const updateStylesMiddleware = (stylesModelPath: string) => (ctx: IContext) => {
   const { stores, request } = ctx;
   const { style } = request.data;
   const { target } = ctx.params;
@@ -35,7 +36,7 @@ export const updateStylesMiddleware = (stylesModelPath: string) => (ctx: any) =>
  * 更新 theme 的 ette 中间件
  * @param themeModelPath - stores 中 theme model 的路径（一般和 style model 路径一致）
  */
-export const updateThemeMiddleware = (themeModelPath: string) => (ctx: any) => {
+export const updateThemeMiddleware = (themeModelPath: string) => (ctx: IContext) => {
   const { stores, request } = ctx;
   const { value } = request.data;
   const { target } = ctx.params;
