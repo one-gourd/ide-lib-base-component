@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import Application, { Client } from 'ette';
 import { ThemeProvider } from 'styled-components';
+import { getValueByPath } from 'ide-lib-utils';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type OptionalProps<T, K> = T | Omit<T, K>;
-
 
 export interface IBaseStyles {
   [propName: string]: React.CSSProperties;
@@ -67,3 +68,67 @@ export const based = (WrappedComponent: React.SFC<IBaseComponentProps>) => {
   return BaseComponent;
 }
 
+
+
+/* ----------------------------------------------------
+    以下是专门配合 store 时的工具函数
+----------------------------------------------------- */
+
+export interface IStoresEnv<T> {
+  stores: T;
+  app: Application,
+  client: Client,
+  innerApps?: Record<string, Application>
+}
+
+export function extracSubEnv<T extends Partial<IStoresEnv<T>>>(storesEnv: IStoresEnv<T>, subName: string): IStoresEnv<T> {
+  const stores = getValueByPath(storesEnv, subName);
+  const app = getValueByPath(storesEnv, `innerApps.${subName}`);
+  return {
+    stores,
+    app: app,
+    client: app && app.client,
+    innerApps: app && app.innerApps || {}
+  }
+}
+
+
+export type TAnyFunction = (...args: any[]) => void;
+
+export function injectBehavior<T extends Record<string, any>, K extends Partial<IStoresEnv<K>>>(storesEnv: IStoresEnv<K>, props: T, eventName: string, behaviors: TAnyFunction[]) {
+
+  // 根据名字获取指定响应事件
+  const eventFn = props[eventName] as TAnyFunction;
+  type eventType = Parameters<typeof eventFn>;
+
+  if (!eventFn) return;
+
+  return function (...eventArgs: eventType) {
+
+    // 给页面注入行为
+    [].concat(behaviors).forEach(action => {
+      action(storesEnv)(...eventArgs);
+    });
+
+    // 实现用户自定义的函数行为
+    eventFn(...eventArgs);
+  }
+};
+
+export interface IEventMap {
+  [prop: string]: TAnyFunction[];
+}
+
+/**
+ * 重新分配事件，使用 useCallback 来增强性能
+ */
+export function useIndectedEvents<T extends Record<string, any>, K extends Partial<IStoresEnv<K>>>(storesEnv: IStoresEnv<K>, props: T, eventMap: IEventMap) {
+  const injectedEvent: Record<string, any> = {};
+  for (const eventName in eventMap) {
+    // 获取函数
+    const behaviors = eventMap[eventName];
+    injectedEvent[eventName] = useCallback(injectBehavior<T, K>(storesEnv, props, eventName, behaviors), []);
+  }
+
+  return Object.assign({}, props, injectedEvent);
+}
