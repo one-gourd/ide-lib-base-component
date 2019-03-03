@@ -22,3 +22,20 @@ export function buildNormalResponse(ctx: IContext, status = 200, data: any, mess
         message: message
     };
 }
+
+/**
+ * 获取子组件的 router 前缀（即格式为 `/clients/schemaTree` 这样的格式）
+ *
+ * @template T
+ * @param {T} appEnum
+ * @returns {Record<keyof T, string>}
+ */
+export function getSubRouterPrefix<T>(appEnum: T): Record<keyof T, string> {
+    const subPrefixes = {} as Record<keyof T, string>;
+    for (const name in appEnum) {
+        if (appEnum.hasOwnProperty(name)) {
+            subPrefixes[name] = `/clients/${name}`
+        }
+    }
+    return subPrefixes;
+}

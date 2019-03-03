@@ -1,5 +1,7 @@
 import Application, { middlewareFunction } from 'ette';
 import proxy from 'ette-proxy';
+import { message } from 'antd';
+
 import { debugIO } from '../../lib/debug';
 
 interface IProxyRule {
@@ -68,3 +70,27 @@ export const applyProxy = function (
         });
     });
 };
+
+
+/**
+ * 判断 ette 请求返回的 code 码是否是 expectedCode（默认是 200）
+ * 一般正常情况下是 200 的返回值，如果请求跑飞了，一般会返回 404
+ *
+ * @param {Response} res - ette response 对象
+ * @param {(string | string[])} [keywords] - 方便用户给开发者定位问题的关键词
+ * @param {string} [msg='请求失败，请联系开发者排查'] - 显示的提示文案
+ * @param {number} [expectedCode=200] - 期望的响应值 code
+ * @returns {boolean} 是否符合期望的响应值
+ */
+export function hasEtteException(res: Response, keywords?: string | string[], msg: string = '请求失败，请联系开发者排查', expectedCode = 200){
+    if (res.status !== expectedCode) {
+        // 有关键词才显示提示
+        if (!!keywords) {
+            keywords = [].concat(keywords)
+            message.info(`${msg} 关键词 [${keywords.join(' ')}]`)
+        }
+        return true;
+    } else {
+        return false;
+    }
+}

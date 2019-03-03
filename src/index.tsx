@@ -11,6 +11,7 @@
 export * from './BaseComponent/';
 export * from './BaseComponent/schema/';
 export * from './BaseComponent/schema/util';
+export * from './BaseComponent/schema/stores';
 
 export * from './BaseComponent/router/';
 export * from './BaseComponent/controller/util';
