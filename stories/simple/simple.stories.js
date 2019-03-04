@@ -27,7 +27,7 @@ const clickBtn = target => () => {
 storiesOf('基础使用', module)
   .addParameters(wInfo(mdMobx))
   .addWithJSX('使用 mobx 化的 props', () => {
-    const BaseComponentWithStore = BaseComponentAddStore({ model: propsModel });
+    const BaseComponentWithStore = BaseComponentAddStore({stores:{ model: propsModel }});
     return (
       <div>
         <button onClick={clickBtn(propsModel)}>

@@ -81,7 +81,7 @@ export interface IStoresEnv<T> {
   innerApps?: Record<string, Application>
 }
 
-export function extracSubEnv<T extends Partial<IStoresEnv<T>>>(storesEnv: IStoresEnv<T>, subName: string): IStoresEnv<T> {
+export function extracSubEnv<T>(storesEnv: IStoresEnv<T>, subName: string): IStoresEnv<T> {
   const stores = getValueByPath(storesEnv, subName);
   const app = getValueByPath(storesEnv, `innerApps.${subName}`);
   return {
@@ -95,7 +95,7 @@ export function extracSubEnv<T extends Partial<IStoresEnv<T>>>(storesEnv: IStore
 
 export type TAnyFunction = (...args: any[]) => void;
 
-export function injectBehavior<T extends Record<string, any>, K extends Partial<IStoresEnv<K>>>(storesEnv: IStoresEnv<K>, props: T, eventName: string, behaviors: TAnyFunction[]) {
+export function injectBehavior<T extends Record<string, any>, K>(storesEnv: IStoresEnv<K>, props: T, eventName: string, behaviors: TAnyFunction[]) {
 
   // 根据名字获取指定响应事件
   const eventFn = props[eventName] as TAnyFunction;
@@ -122,7 +122,7 @@ export interface IEventMap {
 /**
  * 重新分配事件，使用 useCallback 来增强性能
  */
-export function useIndectedEvents<T extends Record<string, any>, K extends Partial<IStoresEnv<K>>>(storesEnv: IStoresEnv<K>, props: T, eventMap: IEventMap) {
+export function useIndectedEvents<T extends Record<string, any>, K>(storesEnv: IStoresEnv<K>, props: T, eventMap: IEventMap) {
   const injectedEvent: Record<string, any> = {};
   for (const eventName in eventMap) {
     // 获取函数

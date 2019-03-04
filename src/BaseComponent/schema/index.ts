@@ -3,7 +3,8 @@ import {
   types,
   Instance,
   IAnyModelType,
-  applySnapshot
+  applySnapshot,
+  SnapshotOrInstance
 } from 'mobx-state-tree';
 
 import React from 'react';
@@ -74,14 +75,14 @@ export const BaseModel = types
         return styles;
       },
 
-      get theme() {
+      get theme(): SnapshotOrInstance<typeof self._theme> {
         return self._theme.toJSON();
       }
     };
   })
   .actions(self => {
     return {
-      setTheme(theme: IBaseTheme) {
+      setTheme(theme: SnapshotOrInstance<typeof self._theme>) {
         self._theme = cast(theme);
       },
 
