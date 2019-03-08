@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.5"></a>
+## [0.1.5](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.4...v0.1.5) (2019-03-08)
+
+
+### Features
+
+* **功能改进:** ette 响应使用统一的格式；正确给 base component 组件注入默认 props； ([be72457](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/be72457))
+
+
+
 <a name="0.1.4"></a>
 ## [0.1.4](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.3...v0.1.4) (2019-03-04)
 
