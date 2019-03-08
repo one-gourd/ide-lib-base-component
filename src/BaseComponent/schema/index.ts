@@ -77,6 +77,10 @@ export const BaseModel = types
 
       get theme(): SnapshotOrInstance<typeof self._theme> {
         return self._theme.toJSON();
+      },
+
+      themeValue(name: string) {
+        return self._theme.get(name)|| '';
       }
     };
   })

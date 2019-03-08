@@ -1,5 +1,6 @@
 import { IContext } from 'ette';
 import { isPlainObject, getValueByPath } from "ide-lib-utils";
+import { buildNormalResponse} from './util';
 
 /**
  * 更新 styles 的 ette 中间件
@@ -9,27 +10,28 @@ export const updateStylesMiddleware = (stylesModelPath: string) => (ctx: IContex
   const { stores, request } = ctx;
   const { style } = request.data;
   const { target } = ctx.params;
-  let result = {
-    message: '',
-    success: false
-  };
 
+  let message = '';
+  let success = false;
+  let origin = {}
   if (!target) {
-    result.message = '传入 css 目标不能为空';
+    message = '传入 css 目标不能为空';
   } else if (!isPlainObject(style)) {
-    result.message = `传入 css 对象格式不正确: ${style}`;
+    message = `传入 css 对象格式不正确: ${style}`;
   } else {
     // stores.setSchema(createSchemaModel(schema));
     const targetModel = getValueByPath(stores, stylesModelPath);
     if (targetModel) {
-      result = targetModel.updateCssAttribute(target, style);
+      origin = targetModel.styles;
+      const result = targetModel.updateCssAttribute(target, style);
+      message = result.message;
+      success = result.success;
     } else {
-      result.message = `stores['${stylesModelPath}'] may has't mix style model, please check`;
+      message = `stores['${stylesModelPath}'] may has't mix style model, please check`;
     }
   }
 
-  ctx.response.body = result;
-  ctx.response.status = 200;
+  buildNormalResponse(ctx, 200, { success, origin }, success ? `${target} 的 style 从 ${origin} -> ${style} 的变更: ${success}.` : message);
 }
 
 /**
@@ -40,17 +42,22 @@ export const updateThemeMiddleware = (themeModelPath: string) => (ctx: IContext)
   const { stores, request } = ctx;
   const { value } = request.data;
   const { target } = ctx.params;
-  let result = {
-    message: '',
-    success: false
-  };
+
+
+  let message = '';
+  let success = false;
+  let origin = '';
   // stores.setSchema(createSchemaModel(schema));
   const targetModel = getValueByPath(stores, themeModelPath);
   if (targetModel) {
-    result = targetModel.updateTheme(target, value);
+    origin = targetModel.themeValue(target);
+    const result = targetModel.updateTheme(target, value);
+    message = result.message;
+    success = result.success;
   } else {
-    result.message = `stores['${themeModelPath}'] may has't mix theme model, please check`;
+    message = `stores['${themeModelPath}'] may has't mix theme model, please check`;
   }
-  ctx.response.body = result;
-  ctx.response.status = 200;
+
+  buildNormalResponse(ctx, 200, { success, origin }, success ? `theme.[${target}] 从 ${origin} -> ${value} 的变更: ${success}.` : message);
+
 }

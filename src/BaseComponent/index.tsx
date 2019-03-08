@@ -2,6 +2,9 @@ import React, { useCallback } from 'react';
 import Application, { Client } from 'ette';
 import { ThemeProvider } from 'styled-components';
 import { getValueByPath } from 'ide-lib-utils';
+import { TAnyMSTModel } from './schema/stores';
+
+import { debugRender } from '../lib/debug';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type OptionalProps<T, K> = T | Omit<T, K>;
@@ -38,13 +41,6 @@ export interface IBaseComponentProps {
 };
 
 
-export const DEFAULT_PROPS: IBaseComponentProps = {
-  theme: {
-  },
-  styles: {
-  }
-};
-
 function getDisplayName(WrappedComponent: React.SFC<IBaseComponentProps>) {
   return WrappedComponent.displayName ||
     WrappedComponent.name || 'Component';
@@ -53,14 +49,15 @@ function getDisplayName(WrappedComponent: React.SFC<IBaseComponentProps>) {
  * 使用高阶组件默认注入 theme 和 css 组件
  * @param subComponents - 子组件列表
  */
-export const based = (WrappedComponent: React.SFC<IBaseComponentProps>) => {
+export const based = (WrappedComponent: React.SFC<IBaseComponentProps>, defaultProps: IBaseComponentProps = {}) => {
   const BaseComponent = function (props: IBaseComponentProps) {
     // const { SchemaTreeComponent } = subComponents;
-    const mergedProps = Object.assign({}, DEFAULT_PROPS, props);
-    const { theme } = mergedProps;
+    const mergedProps = Object.assign({}, defaultProps, props);
+    const { theme = {} } = mergedProps;
 
+    debugRender('[based] 接收到的 props: %o', props);
     return <ThemeProvider theme={theme}>
-      <WrappedComponent {...props} />
+      <WrappedComponent {...mergedProps} />
     </ThemeProvider>
   }
 
@@ -81,8 +78,8 @@ export interface IStoresEnv<T> {
   innerApps?: Record<string, Application>
 }
 
-export function extracSubEnv<T>(storesEnv: IStoresEnv<T>, subName: string): IStoresEnv<T> {
-  const stores = getValueByPath(storesEnv, subName);
+export function extracSubEnv<T, K>(storesEnv: IStoresEnv<T>, subName: string) {
+  const stores: K = getValueByPath(storesEnv, `stores.${subName}`);
   const app = getValueByPath(storesEnv, `innerApps.${subName}`);
   return {
     stores,
