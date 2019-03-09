@@ -8,8 +8,7 @@ import {
 } from 'mobx-state-tree';
 
 import React from 'react';
-import { debugModel } from '../../lib/debug';
-import { IBaseStyles, IBaseTheme } from '../index';
+import { IBaseStyles } from '../index';
 
 /**
  * 样式模型
@@ -34,14 +33,14 @@ const StyleModel = types
   });
 
 
-export type TBaseControlledKeys = 'styles' | 'theme';
+// 将枚举变成数组，用于类型推导
+// see: https://github.com/Microsoft/TypeScript/issues/28046
+export function stringLiterals<T extends string>(...args: T[]): T[] { return args; }
+export type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType> ? ElementType : never;
 
-// 定义被 store 控制的 model key 的列表，没法借用 ts 的能力动态从 TLibUtilsControlledKeys 中获取
-export const BASE_CONTROLLED_KEYS: string[] = [
-  'theme',
-  'styles',
-];
-
+// 定义被 store 控制的 model key 的列表，没法借用 ts 的能力动态从 BaseModel 中获取
+export const BASE_CONTROLLED_KEYS = ['theme', 'styles'];
+export type TBaseControlledKeys = 'theme' | 'styles';
 
 /**
  * LibUtils 对应的模型
