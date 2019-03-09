@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.6"></a>
+## [0.1.6](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.5...v0.1.6) (2019-03-09)
+
+
+### Features
+
+* **功能新增：类型声明:** 新增 ElementType 类型定义，方便从数组内容推导出类型合集 ([43c3a64](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/43c3a64))
+
+
+
 <a name="0.1.5"></a>
 ## [0.1.5](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.4...v0.1.5) (2019-03-08)
 
