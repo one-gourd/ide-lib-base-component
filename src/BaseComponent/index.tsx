@@ -119,7 +119,7 @@ export interface IEventMap {
 /**
  * 重新分配事件，使用 useCallback 来增强性能
  */
-export function useIndectedEvents<T extends Record<string, any>, K>(storesEnv: IStoresEnv<K>, props: T, eventMap: IEventMap) {
+export function useInjectedEvents<T extends Record<string, any>, K>(storesEnv: IStoresEnv<K>, props: T, eventMap: IEventMap) {
   const injectedEvent: Record<string, any> = {};
   for (const eventName in eventMap) {
     // 获取函数
