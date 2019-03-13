@@ -98,7 +98,7 @@ export function injectBehavior<T extends Record<string, any>, K>(storesEnv: ISto
   const eventFn = props[eventName] as TAnyFunction;
   type eventType = Parameters<typeof eventFn>;
 
-  if (!eventFn) return;
+  // if (!eventFn) return;
 
   return function (...eventArgs: eventType) {
 
@@ -108,7 +108,9 @@ export function injectBehavior<T extends Record<string, any>, K>(storesEnv: ISto
     });
 
     // 实现用户自定义的函数行为
-    eventFn(...eventArgs);
+    if (eventFn) {
+      eventFn(...eventArgs);
+    }
   }
 };
 
