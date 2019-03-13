@@ -1,5 +1,6 @@
-import { IContext } from 'ette';
+import { IContext, isEtteApplication } from 'ette';
 import { isExist } from 'ide-lib-utils';
+import { debugModel, debugError } from '../../lib/debug';
 
 
 /**
@@ -38,4 +39,39 @@ export function getSubRouterPrefix<T>(appEnum: T): Record<keyof T, string> {
         }
     }
     return subPrefixes;
+}
+
+
+/**
+ * 从 ctx 中里提取出指定的子 client，方便进行子组件的请求转发
+ *
+ * @export
+ * @param {Record<string, Application>} innerApps - innerApps 实例
+ * @param {string} name - 子 app 名
+ */
+export function getClientFromCtx(ctx: IContext, subAppName: string) {
+    const {stores, innerApps} = ctx;
+    const baseMsg = `正在从 ${stores.id} 中提取 ${subAppName} 中的 client`;
+    if(!innerApps) {
+        debugError(`${baseMsg}: 失败. 不存在 innerApps 对象；请前往 controller/index.js 检查是否将 innerApps 挂载到 app 对象上`);
+        return;
+    };
+
+    const subApp = innerApps[subAppName];
+    if (!subApp) {
+        debugError(`${baseMsg}: 失败. innerApp 上不存在为名 ${subAppName} 子 app.`, subApp);
+        return;
+    }
+    if (!isEtteApplication(subApp)){
+        debugError(`${baseMsg}: 失败. innerApp.${subAppName} 不是合法的 ette 实例. %o`, subApp);
+        return;
+    }
+
+    if(!subApp.client) {
+        debugError(`${baseMsg}: 失败. 虽然 innerApp.${subAppName} 对象存在，但没有 client 属性: %o`, subApp);
+        return;
+    }
+
+    debugModel(`${baseMsg}: 成功`);
+    return subApp.client;
 }
