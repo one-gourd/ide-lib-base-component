@@ -38,34 +38,39 @@ export interface IBaseComponentProps {
    * 兼容其他属性
    */
   [prop: string]: any;
-};
-
+}
 
 function getDisplayName(WrappedComponent: React.SFC<IBaseComponentProps>) {
-  return WrappedComponent.displayName ||
-    WrappedComponent.name || 'Component';
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 /**
  * 使用高阶组件默认注入 theme 和 css 组件
  * @param subComponents - 子组件列表
  */
-export const based = (WrappedComponent: React.SFC<IBaseComponentProps>, defaultProps: IBaseComponentProps = {}) => {
-  const BaseComponent = function (props: IBaseComponentProps) {
+export const based = (
+  WrappedComponent: React.SFC<IBaseComponentProps>,
+  defaultProps: IBaseComponentProps = {}
+) => {
+  const BaseComponent = function(props: IBaseComponentProps) {
     // const { SchemaTreeComponent } = subComponents;
-    const mergedProps = Object.assign({}, defaultProps, props);
-    const { theme = {} } = mergedProps;
+    const { styles = {}, theme = {}, ...otherProps } = props;
+    const mergedProps = Object.assign({}, defaultProps, otherProps);
+
+    // 针对 styles、theme 做次级融合的处理
+    mergedProps.styles = Object.assign({}, defaultProps.styles || {}, styles);
+    mergedProps.theme = Object.assign({}, defaultProps.theme || {}, theme);
 
     debugRender('[based] 接收到的 props: %o', props);
-    return <ThemeProvider theme={theme}>
-      <WrappedComponent {...mergedProps} />
-    </ThemeProvider>
-  }
+    return (
+      <ThemeProvider theme={mergedProps.theme}>
+        <WrappedComponent {...mergedProps} />
+      </ThemeProvider>
+    );
+  };
 
   BaseComponent.displayName = `Based${getDisplayName(WrappedComponent)}`;
   return BaseComponent;
-}
-
-
+};
 
 /* ----------------------------------------------------
     以下是专门配合 store 时的工具函数
@@ -73,9 +78,9 @@ export const based = (WrappedComponent: React.SFC<IBaseComponentProps>, defaultP
 
 export interface IStoresEnv<T> {
   stores: T;
-  app: Application,
-  client: Client,
-  innerApps?: Record<string, Application>
+  app: Application;
+  client: Client;
+  innerApps?: Record<string, Application>;
 }
 
 export function extracSubEnv<T, K>(storesEnv: IStoresEnv<T>, subName: string) {
@@ -85,23 +90,25 @@ export function extracSubEnv<T, K>(storesEnv: IStoresEnv<T>, subName: string) {
     stores,
     app: app,
     client: app && app.client,
-    innerApps: app && app.innerApps || {}
-  }
+    innerApps: (app && app.innerApps) || {}
+  };
 }
-
 
 export type TAnyFunction = (...args: any[]) => void;
 
-export function injectBehavior<T extends Record<string, any>, K>(storesEnv: IStoresEnv<K>, props: T, eventName: string, behaviors: TAnyFunction[]) {
-
+export function injectBehavior<T extends Record<string, any>, K>(
+  storesEnv: IStoresEnv<K>,
+  props: T,
+  eventName: string,
+  behaviors: TAnyFunction[]
+) {
   // 根据名字获取指定响应事件
   const eventFn = props[eventName] as TAnyFunction;
   type eventType = Parameters<typeof eventFn>;
 
   // if (!eventFn) return;
 
-  return function (...eventArgs: eventType) {
-
+  return function(...eventArgs: eventType) {
     // 给页面注入行为
     [].concat(behaviors).forEach(action => {
       action(storesEnv)(...eventArgs);
@@ -111,8 +118,8 @@ export function injectBehavior<T extends Record<string, any>, K>(storesEnv: ISto
     if (eventFn) {
       eventFn(...eventArgs);
     }
-  }
-};
+  };
+}
 
 export interface IEventMap {
   [prop: string]: TAnyFunction[];
@@ -121,12 +128,19 @@ export interface IEventMap {
 /**
  * 重新分配事件，使用 useCallback 来增强性能
  */
-export function useInjectedEvents<T extends Record<string, any>, K>(storesEnv: IStoresEnv<K>, props: T, eventMap: IEventMap) {
+export function useInjectedEvents<T extends Record<string, any>, K>(
+  storesEnv: IStoresEnv<K>,
+  props: T,
+  eventMap: IEventMap
+) {
   const injectedEvent: Record<string, any> = {};
   for (const eventName in eventMap) {
     // 获取函数
     const behaviors = eventMap[eventName];
-    injectedEvent[eventName] = useCallback(injectBehavior<T, K>(storesEnv, props, eventName, behaviors), []);
+    injectedEvent[eventName] = useCallback(
+      injectBehavior<T, K>(storesEnv, props, eventName, behaviors),
+      []
+    );
   }
 
   return Object.assign({}, props, injectedEvent);
