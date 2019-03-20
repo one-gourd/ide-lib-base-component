@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import Application, { Client } from 'ette';
+import { reaction } from 'mobx';
+import { useDisposable } from 'mobx-react-lite';
 import { ThemeProvider } from 'styled-components';
 import { getValueByPath } from 'ide-lib-utils';
-import { TAnyMSTModel } from './schema/stores';
 
-import { debugRender } from '../lib/debug';
+import { TAnyMSTModel } from './schema/stores';
+import { debugRender, debugModel } from '../lib/debug';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type OptionalProps<T, K> = T | Omit<T, K>;
@@ -23,7 +25,14 @@ export interface IBaseTheme {
   [prop: string]: any;
 }
 
-export interface IBaseComponentProps {
+export interface IBaseComponentEvent {
+  /**
+   * 当指定的 model 有更改的时候
+   */
+  onModelChange?: TModelChangeHandler;
+}
+
+export interface IBaseComponentProps extends IBaseComponentEvent {
   /**
    * 样式集合，方便外部控制
    */
@@ -71,6 +80,22 @@ export const based = (
   BaseComponent.displayName = `Based${getDisplayName(WrappedComponent)}`;
   return BaseComponent;
 };
+
+/* ----------------------------------------------------
+    以下是专门配合 store 时的工具函数
+----------------------------------------------------- */
+/**
+ * get the previous props or state. 获取前一次渲染时的值
+ * refer: https://reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-states
+ * @param value - 任何 props、state 等属性值
+ */
+export function usePrevious(value: any) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 /* ----------------------------------------------------
     以下是专门配合 store 时的工具函数
@@ -139,9 +164,63 @@ export function useInjectedEvents<T extends Record<string, any>, K>(
     const behaviors = eventMap[eventName];
     injectedEvent[eventName] = useCallback(
       injectBehavior<T, K>(storesEnv, props, eventName, behaviors),
-      []
+      [props[eventName]]
     );
   }
 
   return Object.assign({}, props, injectedEvent);
+}
+
+// 处理 model change 的回调函数类型
+export type TModelChangeHandler = (key: string, value: any) => void;
+
+/**
+ * 注册 mst model 制定属性变更时的回调函数
+ * 场景：当我们 schema tree 有更新的的时候，想要自动调用 hander 来处理一些副作用（比如刷新预览页面）
+ *
+ * @param model - 想要监听的 model 对象（mst 对象）
+ * @param keys - 要监听的属性
+ * @param handler - model 属性变更时调用的回调函数
+ */
+export function addModelChangeListener(
+  model: TAnyMSTModel,
+  keys: string | string[],
+  handler: TModelChangeHandler
+) {
+  if (!model) {
+    debugModel('[addModelChangeListener] 没有 model 对象，不注册');
+    return;
+  }
+
+  if (!keys || !keys.length) {
+    debugModel(
+      `[addModelChangeListener] 没有指定要监听的属性列表 (keys:${keys})，不注册`
+    );
+    return;
+  }
+
+  if (!handler) {
+    debugModel(`[addModelChangeListener] 没有指定要监听的 handler，不注册`);
+    return;
+  }
+
+  const targetKeys = [].concat(keys);
+  // 监听各个属性
+  targetKeys.forEach((key: string) => {
+    useDisposable(
+      () =>
+        reaction(
+          () => (model[key].toJSON ? model[key].toJSON() : model[key]),  // 兼容普通对象，不过话说回来普通对象并不是这个函数的目的；（也触发不了）
+          () => {
+            // change
+            debugModel(
+              `监听到 model['${key}'] 有变更，将执行 onModelChange 方法. %o`,
+              model[key]
+            );
+            handler(key, model[key]);
+          }
+        ),
+      [model[key]]
+    );
+  });
 }
