@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.8"></a>
+## [0.1.8](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.7...v0.1.8) (2019-03-21)
+
+
+### Bug Fixes
+
+* **injectBehavior 方法:** 当不存在用户自定义函数的时候，也可以使用 solution 中预置的方法 ([ed15a98](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/ed15a98))
+
+
+### Features
+
+* **功能改善: 属性:** 对 styles、theme 属性进行次级合并，较完整保留默认属性；格式化代码； ([9750a6e](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/9750a6e))
+* **功能新增: 函数:** 新增 addModelChangeListener 方法，usePrevious 自定义 hooks ([e5f7453](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/e5f7453))
+* **功能新增: 方法:** 新增 getClientFromCtx 方法，用于从 ctx 中提取指定 client 对象 ([82e9451](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/82e9451))
+
+
+
 <a name="0.1.7"></a>
 ## [0.1.7](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.6...v0.1.7) (2019-03-11)
 
