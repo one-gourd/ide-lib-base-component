@@ -42,6 +42,8 @@ export type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyAr
 export const BASE_CONTROLLED_KEYS = ['theme', 'styles'];
 export type TBaseControlledKeys = 'theme' | 'styles';
 
+export interface IAnyModelInstance extends Instance<IAnyModelType> { }
+
 /**
  * LibUtils 对应的模型
  */

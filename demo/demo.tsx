@@ -2,9 +2,11 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { Button } from 'antd';
 import { based, IBaseComponentProps } from '../src/';
+import {test as testProxy} from './test-proxy';
+
+testProxy();
 
 interface IProps extends IBaseComponentProps {
-
   /**
    * 是否展现
    */
@@ -16,13 +18,13 @@ interface IProps extends IBaseComponentProps {
   text?: string;
 }
 
-const Simple = function (props: IProps) {
-  return props.visible ? <div style={props.styles.button}>
-      <Button onClick={props.onClick}>
-        {props.text || '点我试试'}
-      </Button>
-    </div> : null
-}
+const Simple = function(props: IProps) {
+  return props.visible ? (
+    <div style={props.styles.button}>
+      <Button onClick={props.onClick}>{props.text || '点我试试'}</Button>
+    </div>
+  ) : null;
+};
 
 function onClick(value) {
   console.log('当前点击：', value);
@@ -38,10 +40,12 @@ const props: Partial<IProps> = {
   },
   visible: true,
   text: 'hahah'
-}
+};
 
 const Wrapped = based(Simple as any);
 
 render(<Wrapped {...props} onClick={onClick} />, document.getElementById(
   'example'
 ) as HTMLElement);
+
+// ======= 测试其他功能区 ============
