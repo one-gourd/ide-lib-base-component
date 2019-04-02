@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.9"></a>
+## [0.1.9](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.8...v0.1.9) (2019-04-02)
+
+
+### Features
+
+* **功能新增: 类型声明:** 新增 ValueOf 类型声明 ([165d84d](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/165d84d))
+* **功能新增: 路由代理:** 新增 aliasPathProxy、hoistSubRoutes 两个路由重定向功能；新增针对该功能的单元测试用例； ([304af38](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/304af38))
+
+
+
 <a name="0.1.8"></a>
 ## [0.1.8](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.7...v0.1.8) (2019-03-21)
 
