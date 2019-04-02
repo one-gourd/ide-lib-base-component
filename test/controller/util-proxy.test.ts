@@ -368,16 +368,20 @@ describe('[controller] hoistSubRoutes - 提升子路径', () => {
     // 挂载路由
     app.use(router.routes());
 
-    hoistSubRoutes(app, [
-      {
-        alias: '/alias/schemaTree',
-        routerNames: 'schemaTree'
-      },
-      {
-        alias: '/alias/contextMenu',
-        routerNames: ['schemaTree', 'contextMenu']
-      }
-    ], 'subs');
+    hoistSubRoutes(
+      app,
+      [
+        {
+          alias: '/alias/schemaTree',
+          routerNames: 'schemaTree'
+        },
+        {
+          alias: '/alias/contextMenu',
+          routerNames: ['schemaTree', 'contextMenu']
+        }
+      ],
+      'subs'
+    );
 
     client.get('/alias/schemaTree/tree').then((res: Response) => {
       expect(res.body.domain).toBe(ORI_SERVERNAME);
@@ -387,12 +391,31 @@ describe('[controller] hoistSubRoutes - 提升子路径', () => {
 
     client.get('/alias/contextMenu/position').then((res: Response) => {
       expect(res.body.domain).toBe(ORI_SERVERNAME);
-      expect(res.body.path).toBe(
-        '/subs/schemaTree/subs/contextMenu/position'
-      );
+      expect(res.body.path).toBe('/subs/schemaTree/subs/contextMenu/position');
       expect(res.status).toBe(202);
 
       done();
     });
+  });
+
+  test('边界情况 namespace 不能和重定向 path 同根', () => {
+    // 挂载路由
+    app.use(router.routes());
+    expect(()=>{
+      hoistSubRoutes(
+        app,
+        [
+          {
+            alias: '/clients/schemaTree',
+            routerNames: 'schemaTree'
+          },
+          {
+            alias: '/clients/contextMenu',
+            routerNames: ['schemaTree', 'contextMenu']
+          }
+        ],
+        'clients'
+      );
+    }).toThrowError();
   });
 });

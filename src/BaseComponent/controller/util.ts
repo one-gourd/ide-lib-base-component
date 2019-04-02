@@ -151,7 +151,7 @@ export function aliasPathProxy(
     // 首先确保 path 和 alias 不能用同一个父目录下,防止代理回环
     invariant(
       !isSameRoot(pathWithRoot, aliasWithRoot),
-      '[aliasPathProxy] 不能有相同的 root ，否则会出现代理回环'
+      `[aliasPathProxy] path: ${pathWithRoot} 不应该和 alias: ${aliasWithRoot} 有相同的 root ，会出现代理回环`
     );
 
     // 如果设置了命名空间，则需要确保 path 要在命名空间下
