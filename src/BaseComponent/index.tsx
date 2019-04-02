@@ -10,6 +10,7 @@ import { debugRender, debugModel } from '../lib/debug';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type OptionalProps<T, K> = T | Omit<T, K>;
+export type ValueOf<T> = T[keyof T];
 
 export interface IBaseStyles {
   [propName: string]: React.CSSProperties;
@@ -210,7 +211,7 @@ export function addModelChangeListener(
     useDisposable(
       () =>
         reaction(
-          () => (model[key].toJSON ? model[key].toJSON() : model[key]),  // 兼容普通对象，不过话说回来普通对象并不是这个函数的目的；（也触发不了）
+          () => (model[key].toJSON ? model[key].toJSON() : model[key]), // 兼容普通对象，不过话说回来普通对象并不是这个函数的目的；（也触发不了）
           () => {
             // change
             debugModel(
