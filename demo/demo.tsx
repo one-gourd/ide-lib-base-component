@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import { Button } from 'antd';
-import { based, IBaseComponentProps } from '../src/';
-import {test as testProxy} from './test-proxy';
+import { Collapse, Button } from 'antd';
+import { based, IBaseComponentProps, withClickOutside } from '../src/';
+import { test as testProxy } from './test-proxy';
+import console = require('console');
+
+const Panel = Collapse.Panel;
 
 testProxy();
 
@@ -30,6 +33,14 @@ function onClick(value) {
   console.log('当前点击：', value);
 }
 
+function onClickOutside(
+  e: MouseEvent,
+  isOutSide: boolean,
+  detail: { [key: string]: boolean }
+) {
+  console.log('探测是否点在蒙层外:', isOutSide, detail);
+}
+
 const props: Partial<IProps> = {
   styles: {
     button: {
@@ -44,8 +55,23 @@ const props: Partial<IProps> = {
 
 const Wrapped = based(Simple as any);
 
-render(<Wrapped {...props} onClick={onClick} />, document.getElementById(
-  'example'
-) as HTMLElement);
+const WrappedWithClickOutside = withClickOutside(Wrapped);
+
+render(
+  <Collapse defaultActiveKey={['0']}>
+    <Panel header="普通组件" key="0">
+      <Wrapped {...props} onClick={onClick} />
+    </Panel>
+    <Panel header="modal 蒙层组件" key="1">
+      <WrappedWithClickOutside
+        onClick={onClickOutside}
+        visible={true}
+        autoHide={true}
+        contentProps={props}
+      />
+    </Panel>
+  </Collapse>,
+  document.getElementById('example') as HTMLElement
+);
 
 // ======= 测试其他功能区 ============

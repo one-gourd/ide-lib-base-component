@@ -7,6 +7,7 @@ import { getValueByPath } from 'ide-lib-utils';
 
 import { TAnyMSTModel } from './schema/stores';
 import { debugRender, debugModel } from '../lib/debug';
+import { getDisplayName } from '../lib/util';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type OptionalProps<T, K> = T | Omit<T, K>;
@@ -50,9 +51,6 @@ export interface IBaseComponentProps extends IBaseComponentEvent {
   [prop: string]: any;
 }
 
-function getDisplayName(WrappedComponent: React.SFC<IBaseComponentProps>) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
 /**
  * 使用高阶组件默认注入 theme 和 css 组件
  * @param subComponents - 子组件列表
