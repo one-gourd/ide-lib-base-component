@@ -67,6 +67,16 @@ render(
         onClick={onClickOutside}
         visible={true}
         autoHide={true}
+        layerArea={{
+          point: {
+            x: 10,
+            y: 200
+          },
+          size: {
+            width: 600,
+            height: 600
+          }
+        }}
         contentProps={props}
       />
     </Panel>
