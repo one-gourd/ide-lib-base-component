@@ -1,10 +1,12 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 
-import { getDisplayName } from '../../../lib/util';
+import { getValueByPath, invariant } from 'ide-lib-utils';
+
+import { getDisplayName, toClass } from '../../../lib/util';
 import { debugMini } from '../../../lib/debug';
 import { IBaseComponentProps } from '../../index';
 import {
-  StyledModalLayer,
+  // StyledModalLayer,
   StyledModalContaner,
   StyledContentWrap,
   StyledModalCanvas
@@ -32,10 +34,10 @@ interface IClickOutsideProps {
    */
   autoHide: boolean;
 
-  /**
-   * 弹层 z-index 属性
-   */
-  zIndex?: number;
+  // /**
+  //  * 弹层 z-index 属性
+  //  */
+  // zIndex?: number;
 
   /**
    * 背景色
@@ -62,7 +64,6 @@ interface IClickOutsideProps {
 const defaultProps: Partial<IClickOutsideProps> = {
   visible: false,
   autoHide: true,
-  zIndex: 99,
   layerArea: {
     point: {
       x: 0,
@@ -76,7 +77,9 @@ const defaultProps: Partial<IClickOutsideProps> = {
   bgColor: 'rgba(0,0,0, 0.3)'
 };
 
-export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
+export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>, refModalName: string|string []) {
+
+  invariant(!!refModalName, '[withClickOutside] 必须传入目标节点的 ref 字符/路径串')
   const ClickOutsideWrap = function(props: IBaseComponentProps) {
     const {
       zIndex,
@@ -91,6 +94,7 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
     const refContent = useRef(null);
     const refCanvas = useRef(null);
 
+    const ClassedModalContent = toClass(ModalContent);
     const [show, setShow] = useState(visible);
 
     const isOutSide = useCallback((e: MouseEvent, area: IArea) => {
@@ -112,8 +116,15 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
       );
     }, []);
     
-    const getArea = useCallback((refContent: React.RefObject<HTMLElement>)=>{
-        const rect = refContent.current.getBoundingClientRect();
+    const getArea = useCallback((refContent: React.MutableRefObject <any>)=>{
+
+      let refModalNamePath: string = '';
+      
+      [].concat(refModalName).forEach((name)=>{
+        refModalNamePath += `.refs.${name}`;
+      });
+      const targetNode = getValueByPath(refContent.current, refModalNamePath);
+      const rect = targetNode && targetNode.getBoundingClientRect();
 
         const area: IArea =  {
           point: {
@@ -131,6 +142,7 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
     }, []);
 
     useEffect(()=>{
+      if (!refContent || !refContent.current) return;
       const ctx = refCanvas.current.getContext("2d");
       ctx.fillStyle = bgColor;//设置填充色（可以是渐变色或半透明色）
       ctx.rect(0, 0, layerArea.size.width, layerArea.size.height);
@@ -175,14 +187,14 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
 
     return (
       <StyledModalContaner>
-        <StyledModalLayer
+        {/* <StyledModalLayer
           className="modal-layer"
           visible={show}
           zIndex={zIndex}
           layerArea={layerArea}
           color={bgColor}
           onClick={onClickModal(refContent)}
-        />
+        /> */}
         <StyledModalCanvas
           className="canvas-layer"
           visible={show}
@@ -190,10 +202,10 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
           layerArea={layerArea}
           width={layerArea.size.width}
           height={layerArea.size.height}
+          onClick={onClickModal(refContent)}
           ref={refCanvas}/>
-        <StyledContentWrap ref={refContent}>
-          <ModalContent {...contentProps} />
-        </StyledContentWrap>
+
+          <ClassedModalContent ref={refContent} {...contentProps} />
       </StyledModalContaner>
     );
   };

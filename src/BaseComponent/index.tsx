@@ -7,7 +7,7 @@ import { getValueByPath } from 'ide-lib-utils';
 
 import { TAnyMSTModel } from './schema/stores';
 import { debugRender, debugModel } from '../lib/debug';
-import { getDisplayName } from '../lib/util';
+import { getDisplayName, toClass } from '../lib/util';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type OptionalProps<T, K> = T | Omit<T, K>;
@@ -53,16 +53,24 @@ export interface IBaseComponentProps extends IBaseComponentEvent {
 
 /**
  * 使用高阶组件默认注入 theme 和 css 组件
- * @param subComponents - 子组件列表
+ * 
+ * 
+ * @param {React.SFC<IBaseComponentProps>} WrappedComponent - 原组件 
+ * @param {IBaseComponentProps} [defaultProps={}] - 默认属性
+ * @param {boolean} [classed=false] - 是否转换成 class 组件
  */
 export const based = (
   WrappedComponent: React.SFC<IBaseComponentProps>,
-  defaultProps: IBaseComponentProps = {}
+  defaultProps: IBaseComponentProps = {},
+  refName: string = ''
 ) => {
   const BaseComponent = function(props: IBaseComponentProps) {
     // const { SchemaTreeComponent } = subComponents;
     const { styles = {}, theme = {}, ...otherProps } = props;
     const mergedProps = Object.assign({}, defaultProps, otherProps);
+
+    // 如果想要 ref，那么需要转换成 class 组件
+    const ClassedComponent = !!refName ? toClass(WrappedComponent) : WrappedComponent;
 
     // 针对 styles、theme 做次级融合的处理
     mergedProps.styles = Object.assign({}, defaultProps.styles || {}, styles);
@@ -71,7 +79,7 @@ export const based = (
     debugRender('[based] 接收到的 props: %o', props);
     return (
       <ThemeProvider theme={mergedProps.theme}>
-        <WrappedComponent {...mergedProps} />
+        <ClassedComponent ref={refName} {...mergedProps} />
       </ThemeProvider>
     );
   };

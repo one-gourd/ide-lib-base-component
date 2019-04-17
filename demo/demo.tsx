@@ -23,7 +23,7 @@ interface IProps extends IBaseComponentProps {
 
 const Simple = function(props: IProps) {
   return props.visible ? (
-    <div style={props.styles.button}>
+    <div ref="main" style={props.styles.button}>
       <Button onClick={props.onClick}>{props.text || '点我试试'}</Button>
     </div>
   ) : null;
@@ -47,20 +47,47 @@ const props: Partial<IProps> = {
       width: '200px',
       height: '100px',
       backgroundColor: '#ccc'
+    },
+    absoluteWrap:{
+      position: 'relative',
+      width: '400px',
+      height: '100px',
+      backgroundColor: '#ccc'
+    },
+    absoluteButton:{
+      position: 'absolute',
+      left: '40px',
+      top: '10px',
+      width: '150px',
+      height: '100px',
+      backgroundColor: '#eee'
     }
   },
   visible: true,
   text: 'hahah'
 };
 
-const Wrapped = based(Simple as any);
+const Wrapped = based(Simple as any, {}, 'simple');
 
-const WrappedWithClickOutside = withClickOutside(Wrapped);
+const WrappedWithClickOutside = withClickOutside(Wrapped, ['simple', 'main']);
+
+
+// 绝对定位
+const SimpleAbsolute = function (props: IProps) {
+  return props.visible ? (
+    <div ref="main" style={props.styles.absoluteButton}>
+      <Button onClick={props.onClick}>{props.text || '点我试试'}</Button>
+    </div>
+  ) : null;
+};
+
+const WrappedAbsouteWithClickOutside = withClickOutside(SimpleAbsolute, 'main');
+
 
 render(
   <Collapse defaultActiveKey={['0']}>
     <Panel header="普通组件" key="0">
-      <Wrapped {...props} onClick={onClick} />
+      {/* <Wrapped {...props} onClick={onClick} /> */}
     </Panel>
     <Panel header="modal 蒙层组件" key="1">
       <WrappedWithClickOutside
@@ -79,6 +106,27 @@ render(
         }}
         contentProps={props}
       />
+    </Panel>
+    <Panel header="modal 蒙层组件 (absolute)" key="2">
+      <div style={props.styles.absoluteWrap}>
+        <WrappedAbsouteWithClickOutside
+          onClick={onClickOutside}
+          visible={true}
+          autoHide={true}
+          layerArea={{
+            point: {
+              x: 10,
+              y: 200
+            },
+            size: {
+              width: 600,
+              height: 600
+            }
+          }}
+          contentProps={props}
+        />
+      </div>
+
     </Panel>
   </Collapse>,
   document.getElementById('example') as HTMLElement
