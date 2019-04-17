@@ -1,13 +1,14 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect, useState, useLayoutEffect } from 'react';
 import Application, { Client } from 'ette';
 import { reaction } from 'mobx';
 import { useDisposable } from 'mobx-react-lite';
 import { ThemeProvider } from 'styled-components';
 import { getValueByPath } from 'ide-lib-utils';
+import useComponentSize from '@rehooks/component-size'
 
 import { TAnyMSTModel } from './schema/stores';
 import { debugRender, debugModel } from '../lib/debug';
-import { getDisplayName, toClass } from '../lib/util';
+import { getDisplayName } from '../lib/util';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type OptionalProps<T, K> = T | Omit<T, K>;
@@ -32,6 +33,7 @@ export interface IBaseComponentEvent {
    * 当指定的 model 有更改的时候
    */
   onModelChange?: TModelChangeHandler;
+
 }
 
 export interface IBaseComponentProps extends IBaseComponentEvent {
@@ -51,6 +53,50 @@ export interface IBaseComponentProps extends IBaseComponentEvent {
   [prop: string]: any;
 }
 
+
+export interface ISizeArea {
+  point: {
+    x: number;
+    y: number;
+  };
+  size: {
+    width: number;
+    height: number;
+  };
+}
+
+
+/**
+ * 根据 ref 获取组件尺寸
+ *
+ * @param {React.MutableRefObject<any>} refContent
+ */
+export const getSizeArea = (refContent: React.RefObject<any>, componentSize: ISizeArea["size"]) =>{
+  const rect = refContent.current && refContent.current.getBoundingClientRect() || {left: 0, top: 0};
+
+  const area: ISizeArea = {
+    point: {
+      x: rect.left,
+      y: rect.top
+    },
+    size: componentSize
+  };
+
+  return area;
+}
+
+export function useSizeArea(ref: React.RefObject<any>) {
+  const componentSize = useComponentSize(ref);
+  const [areaSize, setAreaSize] = useState(getSizeArea(ref, componentSize))
+  // 用于获取元素尺寸
+  useLayoutEffect(() => {
+    // 获取组件的 offset 和 size 属性
+    setAreaSize(getSizeArea(ref, componentSize));
+  }, [componentSize, ref]);
+
+  return areaSize;
+}
+
 /**
  * 使用高阶组件默认注入 theme 和 css 组件
  * 
@@ -61,16 +107,12 @@ export interface IBaseComponentProps extends IBaseComponentEvent {
  */
 export const based = (
   WrappedComponent: React.SFC<IBaseComponentProps>,
-  defaultProps: IBaseComponentProps = {},
-  refName: string = ''
+  defaultProps: IBaseComponentProps = {}
 ) => {
   const BaseComponent = function(props: IBaseComponentProps) {
     // const { SchemaTreeComponent } = subComponents;
     const { styles = {}, theme = {}, ...otherProps } = props;
     const mergedProps = Object.assign({}, defaultProps, otherProps);
-
-    // 如果想要 ref，那么需要转换成 class 组件
-    const ClassedComponent = !!refName ? toClass(WrappedComponent) : WrappedComponent;
 
     // 针对 styles、theme 做次级融合的处理
     mergedProps.styles = Object.assign({}, defaultProps.styles || {}, styles);
@@ -79,7 +121,7 @@ export const based = (
     debugRender('[based] 接收到的 props: %o', props);
     return (
       <ThemeProvider theme={mergedProps.theme}>
-        <ClassedComponent ref={refName} {...mergedProps} />
+        <WrappedComponent {...mergedProps} />
       </ThemeProvider>
     );
   };
@@ -87,6 +129,7 @@ export const based = (
   BaseComponent.displayName = `Based${getDisplayName(WrappedComponent)}`;
   return BaseComponent;
 };
+
 
 /* ----------------------------------------------------
     以下是专门配合 store 时的工具函数

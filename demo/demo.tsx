@@ -3,7 +3,8 @@ import { render } from 'react-dom';
 import { Collapse, Button } from 'antd';
 import { based, IBaseComponentProps, withClickOutside } from '../src/';
 import { test as testProxy } from './test-proxy';
-import console = require('console');
+
+import { toClass } from '../src/lib/util';
 
 const Panel = Collapse.Panel;
 
@@ -23,7 +24,7 @@ interface IProps extends IBaseComponentProps {
 
 const Simple = function(props: IProps) {
   return props.visible ? (
-    <div ref="main" style={props.styles.button}>
+    <div style={props.styles.button}>
       <Button onClick={props.onClick}>{props.text || '点我试试'}</Button>
     </div>
   ) : null;
@@ -67,27 +68,27 @@ const props: Partial<IProps> = {
   text: 'hahah'
 };
 
-const Wrapped = based(Simple as any, {}, 'simple');
+const Wrapped = based(Simple as any);
 
-const WrappedWithClickOutside = withClickOutside(Wrapped, ['simple', 'main']);
+const WrappedWithClickOutside = withClickOutside(Wrapped as any);
 
 
 // 绝对定位
 const SimpleAbsolute = function (props: IProps) {
   return props.visible ? (
-    <div ref="main" style={props.styles.absoluteButton}>
+    <div  style={props.styles.absoluteButton}>
       <Button onClick={props.onClick}>{props.text || '点我试试'}</Button>
     </div>
   ) : null;
 };
 
-const WrappedAbsouteWithClickOutside = withClickOutside(SimpleAbsolute, 'main');
+const WrappedAbsouteWithClickOutside = withClickOutside(SimpleAbsolute);
 
 
 render(
   <Collapse defaultActiveKey={['0']}>
     <Panel header="普通组件" key="0">
-      {/* <Wrapped {...props} onClick={onClick} /> */}
+      <Wrapped {...props} onClick={onClick} />
     </Panel>
     <Panel header="modal 蒙层组件" key="1">
       <WrappedWithClickOutside
@@ -97,7 +98,7 @@ render(
         layerArea={{
           point: {
             x: 10,
-            y: 200
+            y: 140
           },
           size: {
             width: 600,
@@ -116,7 +117,7 @@ render(
           layerArea={{
             point: {
               x: 10,
-              y: 200
+              y: 180
             },
             size: {
               width: 600,
@@ -126,8 +127,9 @@ render(
           contentProps={props}
         />
       </div>
-
     </Panel>
+
+
   </Collapse>,
   document.getElementById('example') as HTMLElement
 );
