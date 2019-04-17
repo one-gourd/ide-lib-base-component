@@ -44,7 +44,6 @@ aliasPathProxy(app, [
 ]);
 
 // client.get('/aliasSub/user').then((res: Response) => {
-//   console.log(555, res);
 
 //   expect(res.body.domain).toBe(ORI_SERVERNAME);
 //   expect(res.body.path).toBe('/sub/api/user');

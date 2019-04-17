@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 
 import { getDisplayName } from '../../../lib/util';
 import { debugMini } from '../../../lib/debug';
@@ -6,7 +6,8 @@ import { IBaseComponentProps } from '../../index';
 import {
   StyledModalLayer,
   StyledModalContaner,
-  StyledContentWrap
+  StyledContentWrap,
+  StyledModalCanvas
 } from './styles';
 
 interface IArea {
@@ -88,6 +89,7 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
     } = Object.assign({}, defaultProps, props);
 
     const refContent = useRef(null);
+    const refCanvas = useRef(null);
 
     const [show, setShow] = useState(visible);
 
@@ -109,17 +111,11 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
         clientY < y + h
       );
     }, []);
-
-    const onClickModal = useCallback(
-      (refContent: React.RefObject<HTMLElement>) => (e: MouseEvent) => {
-        if (!visible) return;
-        if (!refContent || !refContent.current) return;
-
-        // console.log(444, refContent.current);
-        // 获取内容区域的尺寸
+    
+    const getArea = useCallback((refContent: React.RefObject<HTMLElement>)=>{
         const rect = refContent.current.getBoundingClientRect();
 
-        const contentArea = {
+        const area: IArea =  {
           point: {
             x: rect.left,
             y: rect.top
@@ -129,6 +125,27 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
             height: rect.height
           }
         };
+
+        return area;
+        
+    }, []);
+
+    useEffect(()=>{
+      const ctx = refCanvas.current.getContext("2d");
+      ctx.fillStyle = bgColor;//设置填充色（可以是渐变色或半透明色）
+      ctx.rect(0, 0, layerArea.size.width, layerArea.size.height);
+      ctx.fill(); //替代fillRect();
+      const contentArea = getArea(refContent);
+      // 注意：镂空的区域，需计算出相对于内容节点的位置
+      ctx.clearRect(contentArea.point.x - layerArea.point.x, contentArea.point.y - layerArea.point.y, contentArea.size.width, contentArea.size.height); // 镂空区域
+    }, [bgColor, layerArea]);
+
+    const onClickModal = useCallback(
+      (refContent: React.RefObject<HTMLElement>) => (e: MouseEvent) => {
+        if (!visible) return;
+        if (!refContent || !refContent.current) return;
+
+        const contentArea = getArea(refContent);
         const isOutsideContent = isOutSide(e, contentArea); // 判断是否在 内容外
         const isOutsideLayer = isOutSide(e, layerArea); // 判断是否在蒙层外
 
@@ -149,7 +166,7 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
             layer: isOutsideLayer
           });
 
-        if (autoHide) {
+        if (autoHide && isValideOutside) {
           setShow(false);
         }
       },
@@ -161,12 +178,20 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>) {
         <StyledModalLayer
           className="modal-layer"
           visible={show}
-          zIndex={zIndex - 1}
+          zIndex={zIndex}
           layerArea={layerArea}
           color={bgColor}
           onClick={onClickModal(refContent)}
         />
-        <StyledContentWrap visible={show} ref={refContent} zIndex={zIndex}>
+        <StyledModalCanvas
+          className="canvas-layer"
+          visible={show}
+          zIndex={zIndex}
+          layerArea={layerArea}
+          width={layerArea.size.width}
+          height={layerArea.size.height}
+          ref={refCanvas}/>
+        <StyledContentWrap ref={refContent}>
           <ModalContent {...contentProps} />
         </StyledContentWrap>
       </StyledModalContaner>
