@@ -184,14 +184,17 @@ export function injectBehavior<T extends Record<string, any>, K>(
   // if (!eventFn) return;
 
   return function(...eventArgs: eventType) {
+    // 为了方便组件内部传递状态变量，给每个 action 新增上下文属性
+    const actionContext:{context:{[key: string]: any}} = {context:{}};
+
     // 给页面注入行为
     [].concat(behaviors).forEach(action => {
-      action(storesEnv)(...eventArgs);
+      action(storesEnv, actionContext)(...eventArgs);
     });
 
     // 实现用户自定义的函数行为
     if (eventFn) {
-      eventFn(...eventArgs);
+      eventFn(...eventArgs, actionContext);
     }
   };
 }

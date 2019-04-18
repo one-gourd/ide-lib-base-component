@@ -145,7 +145,7 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>/* 
       },
       [onClick, visible, contentArea]
     );
-      console.log(777, visible);
+    
     return (
       <StyledModalContaner>
         <StyledModalCanvas
