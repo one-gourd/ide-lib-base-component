@@ -17,10 +17,10 @@ interface IClickOutsideProps {
    */
   visible: boolean;
 
-  /**
-   * 点击背景是否自动隐藏
-   */
-  autoHide: boolean;
+  // /**
+  //  * 点击背景是否自动隐藏
+  //  */
+  // autoHide: boolean;
 
   /**
    * 背景色
@@ -46,7 +46,7 @@ interface IClickOutsideProps {
 
 const defaultProps: Partial<IClickOutsideProps> = {
   visible: false,
-  autoHide: true,
+  // autoHide: true,
   layerArea: {
     point: {
       x: 0,
@@ -70,7 +70,7 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>/* 
       layerArea,
       bgColor,
       onClick,
-      autoHide,
+      // autoHide,
       contentProps
     } = Object.assign({}, defaultProps, props);
 
@@ -78,7 +78,7 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>/* 
     const refCanvas = useRef(null);
 
     // const ClassedModalContent = toClass(ModalContent);
-    const [show, setShow] = useState(visible);
+    // const [show, setShow] = useState(visible);
 
     const isOutSide = useCallback((e: MouseEvent, area: ISizeArea) => {
       // 获取当前元素的宽、高；
@@ -100,6 +100,10 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>/* 
     }, []);
 
     const contentArea = useSizeArea(refContent);
+
+    // useEffect(()=>{
+    //   setShow(visible);
+    // }, [visible]);
 
     useEffect(()=>{
       // if (!refContent || !refContent.current) return;
@@ -135,18 +139,18 @@ export function withClickOutside(ModalContent: React.SFC<IBaseComponentProps>/* 
             layer: isOutsideLayer
           });
 
-        if (autoHide && isValideOutside) {
-          setShow(false);
-        }
+        // if (autoHide && isValideOutside) {
+        //   setShow(false);
+        // }
       },
       [onClick, visible, contentArea]
     );
-
+      console.log(777, visible);
     return (
       <StyledModalContaner>
         <StyledModalCanvas
           className="canvas-layer"
-          visible={show}
+          visible={visible}
           zIndex={zIndex}
           layerArea={layerArea}
           width={layerArea.size.width}

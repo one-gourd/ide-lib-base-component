@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useCallback} from 'react';
 import { render } from 'react-dom';
 import { Collapse, Button } from 'antd';
 import { based, IBaseComponentProps, withClickOutside } from '../src/';
@@ -84,6 +84,38 @@ const SimpleAbsolute = function (props: IProps) {
 
 const WrappedAbsouteWithClickOutside = withClickOutside(SimpleAbsolute);
 
+// 带绝对定位的蒙层 demo
+const AbsoluteDemo = (props)=>{
+  const [show, setShow] = useState(false);
+
+  const onClickBtn = useCallback(()=>{
+    setShow(true);
+  }, []);
+
+  const onOutside = useCallback(()=>{
+    setShow(false)
+  }, []);
+  console.log('[absolute demo]:', show);
+  return <div style={props.styles.absoluteWrap}>
+    <WrappedAbsouteWithClickOutside
+      onClick={onOutside}
+      visible={show}
+      layerArea={{
+        point: {
+          x: 10,
+          y: 180
+        },
+        size: {
+          width: 600,
+          height: 600
+        }
+      }}
+      contentProps={props}
+    />
+    <Button style={{marginLeft: 400}} onClick={onClickBtn}>点击显示蒙层</Button>
+  </div>
+}
+
 
 render(
   <Collapse defaultActiveKey={['0']}>
@@ -94,7 +126,6 @@ render(
       <WrappedWithClickOutside
         onClick={onClickOutside}
         visible={true}
-        autoHide={true}
         layerArea={{
           point: {
             x: 10,
@@ -109,24 +140,7 @@ render(
       />
     </Panel>
     <Panel header="modal 蒙层组件 (absolute)" key="2">
-      <div style={props.styles.absoluteWrap}>
-        <WrappedAbsouteWithClickOutside
-          onClick={onClickOutside}
-          visible={true}
-          autoHide={true}
-          layerArea={{
-            point: {
-              x: 10,
-              y: 180
-            },
-            size: {
-              width: 600,
-              height: 600
-            }
-          }}
-          contentProps={props}
-        />
-      </div>
+      <AbsoluteDemo {...props}/>
     </Panel>
 
 
