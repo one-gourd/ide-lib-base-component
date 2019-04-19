@@ -198,7 +198,7 @@ export function injectBehavior<T extends Record<string, any>, K>(
 
     // 实现用户自定义的函数行为
     if (eventFn) {
-      eventFn(...eventArgs, actionContext);
+      return eventFn(...eventArgs, actionContext);
     }
   };
 }
