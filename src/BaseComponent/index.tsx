@@ -171,6 +171,10 @@ export function extracSubEnv<T, K>(storesEnv: IStoresEnv<T>, subName: string) {
 
 export type TAnyFunction = (...args: any[]) => void;
 
+export interface IActionContext {
+  context: { [key: string]: any }
+}
+
 export function injectBehavior<T extends Record<string, any>, K>(
   storesEnv: IStoresEnv<K>,
   props: T,
@@ -185,7 +189,7 @@ export function injectBehavior<T extends Record<string, any>, K>(
 
   return function(...eventArgs: eventType) {
     // 为了方便组件内部传递状态变量，给每个 action 新增上下文属性
-    const actionContext:{context:{[key: string]: any}} = {context:{}};
+    const actionContext: IActionContext = {context:{}};
 
     // 给页面注入行为
     [].concat(behaviors).forEach(action => {
