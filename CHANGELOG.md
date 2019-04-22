@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.10](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.9...v0.1.10) (2019-04-22)
+
+
+### Bug Fixes
+
+* 🐛 响应模型 ([cd6604a](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/cd6604a))
+* 🐛 类型声明 ([8c27dcc](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/8c27dcc))
+* 🐛 蒙层功能 ([3e32c5b](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/3e32c5b))
+* 🐛 蒙版功能 ([ae9f48d](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/ae9f48d))
+
+
+### Features
+
+* **功能新增: 高阶组件:** 新增 withClickOutside 高阶组件，提供快速弹层化功能 ([88f7ec2](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/88f7ec2))
+* 🎸 功能改进: canvas 蒙层 ([64ac7e2](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/64ac7e2))
+* 🎸 功能新增: 上下文 ([fbb4a3e](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/commit/fbb4a3e))
+
+
+
 <a name="0.1.9"></a>
 ## [0.1.9](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.8...v0.1.9) (2019-04-02)
 
