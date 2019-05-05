@@ -32,17 +32,20 @@ const StyleModel = types
     };
   });
 
-
 // 将枚举变成数组，用于类型推导
 // see: https://github.com/Microsoft/TypeScript/issues/28046
-export function stringLiterals<T extends string>(...args: T[]): T[] { return args; }
-export type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType> ? ElementType : never;
+export function stringLiterals<T extends string>(...args: T[]): T[] {
+  return args;
+}
+export type ElementType<
+  T extends ReadonlyArray<unknown>
+> = T extends ReadonlyArray<infer ElementType> ? ElementType : never;
 
 // 定义被 store 控制的 model key 的列表，没法借用 ts 的能力动态从 BaseModel 中获取
-export const BASE_CONTROLLED_KEYS = ['theme', 'styles'];
-export type TBaseControlledKeys = 'theme' | 'styles';
+export const BASE_CONTROLLED_KEYS = ['theme', 'styles', 'cWidth', 'cHeight'];
+export type TBaseControlledKeys = 'theme' | 'styles' | 'cWidth' | 'cHeight';
 
-export interface IAnyModelInstance extends Instance<IAnyModelType> { }
+export interface IAnyModelInstance extends Instance<IAnyModelType> {}
 
 /**
  * LibUtils 对应的模型
@@ -50,7 +53,9 @@ export interface IAnyModelInstance extends Instance<IAnyModelType> { }
 export const BaseModel = types
   .model('BaseModel', {
     _theme: types.map(types.union(types.number, types.string, types.boolean)),
-    _styles: types.map(types.late((): IAnyModelType => StyleModel))
+    _styles: types.map(types.late((): IAnyModelType => StyleModel)),
+    cHeight: types.optional(types.union(types.number, types.string), 'auto'),
+    cWidth: types.optional(types.union(types.number, types.string), 'auto'),
     // language: types.optional(
     //   types.enumeration('Type', CODE_LANGUAGES),
     //   ECodeLanguage.JS
@@ -62,10 +67,9 @@ export const BaseModel = types
   })
   .views(self => {
     return {
-
       /**
-      * 获取 styles 属性
-      */
+       * 获取 styles 属性
+       */
       get styles() {
         const styles: IBaseStyles = {};
         if (self._styles.size) {
@@ -81,7 +85,7 @@ export const BaseModel = types
       },
 
       themeValue(name: string) {
-        return self._theme.get(name)|| '';
+        return self._theme.get(name) || '';
       }
     };
   })
@@ -171,4 +175,4 @@ export const BaseModel = types
     };
   });
 
-export interface IBaseModel extends Instance<typeof BaseModel> { }
+export interface IBaseModel extends Instance<typeof BaseModel> {}

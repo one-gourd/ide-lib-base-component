@@ -1,10 +1,16 @@
-import React, { useCallback, useRef, useEffect, useState, useLayoutEffect } from 'react';
+import React, {
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+  useLayoutEffect
+} from 'react';
 import Application, { Client } from 'ette';
 import { reaction } from 'mobx';
 import { useDisposable } from 'mobx-react-lite';
 import { ThemeProvider } from 'styled-components';
 import { getValueByPath } from 'ide-lib-utils';
-import useComponentSize from '@rehooks/component-size'
+import useComponentSize from '@rehooks/component-size';
 
 import { TAnyMSTModel } from './schema/stores';
 import { debugRender, debugModel } from '../lib/debug';
@@ -33,7 +39,6 @@ export interface IBaseComponentEvent {
    * 当指定的 model 有更改的时候
    */
   onModelChange?: TModelChangeHandler;
-
 }
 
 export interface IBaseComponentProps extends IBaseComponentEvent {
@@ -48,11 +53,26 @@ export interface IBaseComponentProps extends IBaseComponentEvent {
   theme?: IBaseTheme;
 
   /**
+   * 组件的宽度
+   *
+   * @type {(number | string)}
+   * @memberof ISwitchPanelProps
+   */
+  cWidth?: number | string;
+
+  /**
+   * 组件的高度
+   *
+   * @type {(number | string)}
+   * @memberof ISwitchPanelProps
+   */
+  cHeight?: number | string;
+
+  /**
    * 兼容其他属性
    */
   [prop: string]: any;
 }
-
 
 export interface ISizeArea {
   point: {
@@ -65,14 +85,17 @@ export interface ISizeArea {
   };
 }
 
-
 /**
  * 根据 ref 获取组件尺寸
  *
  * @param {React.MutableRefObject<any>} refContent
  */
-export const getSizeArea = (refContent: React.RefObject<any>, componentSize: ISizeArea["size"]) =>{
-  const rect = refContent.current && refContent.current.getBoundingClientRect() || {left: 0, top: 0};
+export const getSizeArea = (
+  refContent: React.RefObject<any>,
+  componentSize: ISizeArea['size']
+) => {
+  const rect = (refContent.current &&
+    refContent.current.getBoundingClientRect()) || { left: 0, top: 0 };
 
   const area: ISizeArea = {
     point: {
@@ -83,11 +106,11 @@ export const getSizeArea = (refContent: React.RefObject<any>, componentSize: ISi
   };
 
   return area;
-}
+};
 
 export function useSizeArea(ref: React.RefObject<any>) {
   const componentSize = useComponentSize(ref);
-  const [areaSize, setAreaSize] = useState(getSizeArea(ref, componentSize))
+  const [areaSize, setAreaSize] = useState(getSizeArea(ref, componentSize));
   // 用于获取元素尺寸
   useLayoutEffect(() => {
     // 获取组件的 offset 和 size 属性
@@ -98,10 +121,21 @@ export function useSizeArea(ref: React.RefObject<any>) {
 }
 
 /**
+ * 统一转换尺寸字面量，比如将 '80' 转换成 80, ’80%‘、’auto‘ 就原值返回
+ */
+function convertSizeLiteral(w: any) {
+  if (isNaN(w as any)) {
+    return w;
+  } else {
+    return Number(w);
+  }
+}
+
+/**
  * 使用高阶组件默认注入 theme 和 css 组件
- * 
- * 
- * @param {React.SFC<IBaseComponentProps>} WrappedComponent - 原组件 
+ *
+ *
+ * @param {React.SFC<IBaseComponentProps>} WrappedComponent - 原组件
  * @param {IBaseComponentProps} [defaultProps={}] - 默认属性
  * @param {boolean} [classed=false] - 是否转换成 class 组件
  */
@@ -111,12 +145,14 @@ export const based = (
 ) => {
   const BaseComponent = function(props: IBaseComponentProps) {
     // const { SchemaTreeComponent } = subComponents;
-    const { styles = {}, theme = {}, ...otherProps } = props;
+    const { styles = {}, theme = {}, cWidth, cHeight, ...otherProps } = props;
     const mergedProps = Object.assign({}, defaultProps, otherProps);
 
     // 针对 styles、theme 做次级融合的处理
     mergedProps.styles = Object.assign({}, defaultProps.styles || {}, styles);
     mergedProps.theme = Object.assign({}, defaultProps.theme || {}, theme);
+    mergedProps.cWidth = convertSizeLiteral(cWidth || '100%');
+    mergedProps.cHeight = convertSizeLiteral(cHeight || '100%');
 
     debugRender('[based] 接收到的 props: %o', props);
     return (
@@ -129,7 +165,6 @@ export const based = (
   BaseComponent.displayName = `Based${getDisplayName(WrappedComponent)}`;
   return BaseComponent;
 };
-
 
 /* ----------------------------------------------------
     以下是专门配合 store 时的工具函数
@@ -172,7 +207,7 @@ export function extracSubEnv<T, K>(storesEnv: IStoresEnv<T>, subName: string) {
 export type TAnyFunction = (...args: any[]) => void;
 
 export interface IActionContext {
-  context: { [key: string]: any }
+  context: { [key: string]: any };
 }
 
 export function injectBehavior<T extends Record<string, any>, K>(
@@ -189,7 +224,7 @@ export function injectBehavior<T extends Record<string, any>, K>(
 
   return function(...eventArgs: eventType) {
     // 为了方便组件内部传递状态变量，给每个 action 新增上下文属性
-    const actionContext: IActionContext = {context:{}};
+    const actionContext: IActionContext = { context: {} };
 
     // 给页面注入行为
     [].concat(behaviors).forEach(action => {
