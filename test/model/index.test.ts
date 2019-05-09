@@ -48,4 +48,32 @@ describe('[JSONModel] json model', () => {
     jsonModel.setValue(newObj);
     expect(jsonModel.value).toEqual(newObj);
   });
+
+  test('支持获取 json 内部数据', () => {
+    const newObj = {
+      c: 1,
+      d: 'hello'
+    };
+    jsonModel.setValue(newObj);
+    expect(jsonModel.value).toEqual(newObj);
+
+    expect(jsonModel.value.c).toEqual(newObj.c);
+    expect(jsonModel.value.d).toEqual(newObj.d);
+  });
+
+  test('不支持局部修改 json 内部数据', () => {
+    const newObj = {
+      c: 1,
+      d: 'hello'
+    };
+    jsonModel.setValue(newObj);
+
+    jsonModel.value.c = 2;
+    expect(jsonModel.value.c).toEqual(1); // 仍旧还是 1
+
+    // 只能整体替换
+    newObj.c = 2;
+    jsonModel.setValue(newObj);
+    expect(jsonModel.value.c).toEqual(2); // 整体替换才有效
+  });
 });
