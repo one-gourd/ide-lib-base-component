@@ -1,5 +1,6 @@
 import { invariant, capitalize } from 'ide-lib-utils';
 import { debugModel } from '../../lib/debug';
+import { JSONModel, IJSONModel } from './index';
 
 /* ----------------------------------------------------
     更新 item 中指定 enum 的属性
@@ -32,3 +33,12 @@ export const updateInScope = (valueSet: string[]) => (
 // ];
 
 // export const updateModelAttribute = updateInScope(EDITABLE_ATTRIBUTE);
+
+/* ----------------------------------------------------
+  初始化 JSON Model 
+----------------------------------------------------- */
+export function createJSONInstance(obj: string | object): IJSONModel {
+  const model = JSONModel.create({});
+  model.setValue(obj);
+  return model;
+}

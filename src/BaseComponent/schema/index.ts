@@ -32,6 +32,31 @@ const StyleModel = types
     };
   });
 
+/**
+ * 常用的 JSONModel 模型，保存 JSON 对象
+ */
+const EMPTY_JSON = '{}';
+export const NAME_JSON_MODEL = 'JSONModel';
+export const JSONModel = types
+  .model(NAME_JSON_MODEL, {
+    _value: types.optional(types.string, EMPTY_JSON) // 属性 schema 描述
+  })
+  .views(self => {
+    return {
+      get value() {
+        return JSON.parse(self._value);
+      }
+    };
+  })
+  .actions(self => {
+    return {
+      setValue(o: string | object) {
+        self._value = typeof o === 'object' ? JSON.stringify(o) : o;
+      }
+    };
+  });
+export interface IJSONModel extends Instance<typeof JSONModel> {}
+
 // 将枚举变成数组，用于类型推导
 // see: https://github.com/Microsoft/TypeScript/issues/28046
 export function stringLiterals<T extends string>(...args: T[]): T[] {
@@ -49,13 +74,14 @@ export interface IAnyModelInstance extends Instance<IAnyModelType> {}
 
 /**
  * LibUtils 对应的模型
+ * TODO: 将 _theme 升级成 JSONModel
  */
 export const BaseModel = types
   .model('BaseModel', {
     _theme: types.map(types.union(types.number, types.string, types.boolean)),
     _styles: types.map(types.late((): IAnyModelType => StyleModel)),
     cHeight: types.optional(types.union(types.number, types.string), 'auto'),
-    cWidth: types.optional(types.union(types.number, types.string), 'auto'),
+    cWidth: types.optional(types.union(types.number, types.string), 'auto')
     // language: types.optional(
     //   types.enumeration('Type', CODE_LANGUAGES),
     //   ECodeLanguage.JS
