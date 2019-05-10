@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.11](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.10...v0.1.11) (2019-05-10)
+
+
+### Features
+
+* 🎸 功能新增: cWidth, cHeight 默认属性 ([3efa8fa](https://github.com/one-gourd/ide-lib-base-component/commit/3efa8fa))
+* 🎸 功能新增: JSONModel ([4b2b725](https://github.com/one-gourd/ide-lib-base-component/commit/4b2b725))
+* 🎸 功能新增: JSONModel 相关常量 ([1c398e9](https://github.com/one-gourd/ide-lib-base-component/commit/1c398e9))
+* 🎸 功能新增: useComponentSize ([2f0a1d1](https://github.com/one-gourd/ide-lib-base-component/commit/2f0a1d1))
+
+
+
 ## [0.1.10](https://github.com/alibaba-paimai-frontend/ide-lib-base-component/compare/v0.1.9...v0.1.10) (2019-04-22)
 
 
