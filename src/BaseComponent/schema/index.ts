@@ -9,6 +9,7 @@ import {
 
 import React from 'react';
 import { IBaseStyles } from '../index';
+import { createJSONInstance } from './util';
 
 /**
  * 样式模型
@@ -56,6 +57,8 @@ export const JSONModel = types
     };
   });
 export interface IJSONModel extends Instance<typeof JSONModel> {}
+export const EMPTY_JSON_INSTANCE = createJSONInstance({});
+export const EMPTY_JSON_SNAPSHOT = (EMPTY_JSON_INSTANCE as any).toJSON();
 
 // 将枚举变成数组，用于类型推导
 // see: https://github.com/Microsoft/TypeScript/issues/28046
