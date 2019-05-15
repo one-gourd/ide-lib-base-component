@@ -9,7 +9,7 @@ import Application, { Client } from 'ette';
 import { reaction } from 'mobx';
 import { useDisposable } from 'mobx-react-lite';
 import { ThemeProvider } from 'styled-components';
-import { getValueByPath } from 'ide-lib-utils';
+import { getValueByPath, advanceMerge, IMergeRule } from 'ide-lib-utils';
 import useComponentSize from '@rehooks/component-size';
 
 import { TAnyMSTModel } from './schema/stores';
@@ -131,6 +131,14 @@ function convertSizeLiteral(w: any) {
   }
 }
 
+export interface IBaseConfig {
+  /**
+   * 默认属性合并规则，默认都是直接 assign 的
+   * 但有些配置项是需要 deep assign
+   */
+  mergeRule?: IMergeRule;
+}
+
 /**
  * 使用高阶组件默认注入 theme 和 css 组件
  *
@@ -141,14 +149,23 @@ function convertSizeLiteral(w: any) {
  */
 export const based = (
   WrappedComponent: React.SFC<IBaseComponentProps>,
-  defaultProps: IBaseComponentProps = {}
+  defaultProps: IBaseComponentProps = {},
+  config: IBaseConfig = {}
 ) => {
   const BaseComponent = function(props: IBaseComponentProps) {
     // const { SchemaTreeComponent } = subComponents;
     const { styles = {}, theme = {}, cWidth, cHeight, ...otherProps } = props;
-    const mergedProps = Object.assign({}, defaultProps, otherProps);
 
-    // 针对 styles、theme 做次级融合的处理
+    /* ----------------------------------------------------
+          对 otherProps 进行特殊处理
+    ----------------------------------------------------- */
+    // 采用 advanceMerge 合并默认值
+    const { mergeRule = {} } = config;
+    const mergedProps = advanceMerge(defaultProps, otherProps, {
+      ...mergeRule,
+    });
+
+    // 默认针对 styles、theme 做 1 级融合的处理,
     mergedProps.styles = Object.assign({}, defaultProps.styles || {}, styles);
     mergedProps.theme = Object.assign({}, defaultProps.theme || {}, theme);
     mergedProps.cWidth = convertSizeLiteral(cWidth || '100%');

@@ -1,7 +1,12 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { render } from 'react-dom';
-import { Collapse, Button } from 'antd';
-import { based, IBaseComponentProps, withClickOutside } from '../src/';
+import { Collapse, Button, Input } from 'antd';
+import {
+  based,
+  IBaseComponentProps,
+  withClickOutside,
+  IBaseConfig
+} from '../src/';
 import { test as testProxy } from './test-proxy';
 import useComponentSize from '@rehooks/component-size';
 import console = require('console');
@@ -20,12 +25,19 @@ interface IProps extends IBaseComponentProps {
    * 文案
    */
   text?: string;
+
+  /**
+   * 额外的数据
+   */
+  data?: object;
 }
 
 const Simple = function(props: IProps) {
   let ref = useRef(null);
   const { width, height } = useComponentSize(ref);
-  
+
+  const { data } = props;
+
   const onClickButton = useCallback(() => {
     console.log(`当前组件尺寸：(w: ${width}, h: ${height})`);
   }, [width, height]);
@@ -38,6 +50,10 @@ const Simple = function(props: IProps) {
       })}
     >
       <Button onClick={onClickButton}>{props.text || '点我试试'}</Button>
+      {(!!data && (
+        <Input.TextArea autosize={true} value={JSON.stringify(data)} />
+      )) ||
+        null}
     </div>
   ) : null;
 };
@@ -81,6 +97,25 @@ const props: Partial<IProps> = {
 };
 
 const Wrapped = based(Simple as any);
+
+const defaultProps = {
+  visible: true,
+  text: 'with Default', // 这个会被覆盖
+  data: {
+    result: {
+      msg: 'hello world'
+    }
+  }
+};
+
+const wrapConfig: IBaseConfig = {
+  // 用于配置融合 rule，默认都是直接一次 assign
+  mergeRule: {
+    data: { level: 1 }
+  }
+};
+
+const WrappedWithDefaultProps = based(Simple as any, defaultProps, wrapConfig);
 
 const WrappedWithClickOutside = withClickOutside(Wrapped as any);
 
@@ -132,11 +167,21 @@ const AbsoluteDemo = props => {
 };
 
 render(
-  <Collapse defaultActiveKey={['0']}>
-    <Panel header="普通组件" key="0">
+  <Collapse defaultActiveKey={['normal-default']}>
+    <Panel header="普通组件" key="normal">
       <Wrapped {...props} cHeight="300" onClick={onClick} />
     </Panel>
-    <Panel header="modal 蒙层组件" key="1">
+    <Panel header="普通组件 - 默认 props" key="normal-default">
+      <WrappedWithDefaultProps
+        {...props}
+        data={{
+          success: true
+        }}
+        cHeight="200"
+        onClick={onClick}
+      />
+    </Panel>
+    <Panel header="modal 蒙层组件" key="modal">
       <WrappedWithClickOutside
         onClick={onClickOutside}
         visible={true}
@@ -153,7 +198,7 @@ render(
         contentProps={props}
       />
     </Panel>
-    <Panel header="modal 蒙层组件 (absolute)" key="2">
+    <Panel header="modal 蒙层组件 (absolute)" key="modal-absolute">
       <AbsoluteDemo {...props} />
     </Panel>
   </Collapse>,

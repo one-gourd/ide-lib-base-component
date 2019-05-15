@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-
 // some from recompose: https://github.com/acdlite/recompose/blob/master/src/packages/recompose/isClassComponent.js
 
 export const isClassComponent = (
@@ -16,8 +15,10 @@ export function getDisplayName(WrappedComponent: any) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
-export const toClass: <Props>(baseComponent: React.FC<Props>) => any = baseComponent => {
-  return  isClassComponent(baseComponent)
+export const toClass: <Props>(
+  baseComponent: React.FC<Props>
+) => any = baseComponent => {
+  return isClassComponent(baseComponent)
     ? baseComponent
     : class ToClass extends Component {
         static displayName = getDisplayName(baseComponent);
@@ -28,9 +29,8 @@ export const toClass: <Props>(baseComponent: React.FC<Props>) => any = baseCompo
           if (typeof baseComponent === 'string') {
             return React.createElement(baseComponent, this.props);
           }
-          const {props, context} = this;
+          const { props, context } = this;
           return baseComponent(props as any, context as any);
         }
       };
-}
-
+};
