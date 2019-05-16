@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.12](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.11...v0.1.12) (2019-05-16)
+
+
+### Features
+
+* 🎸 功能增强: based 方法 ([169ed8a](https://github.com/one-gourd/ide-lib-base-component/commit/169ed8a))
+* 🎸 功能完善:日志 ([7ec9087](https://github.com/one-gourd/ide-lib-base-component/commit/7ec9087))
+
+
+
 ## [0.1.11](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.10...v0.1.11) (2019-05-10)
 
 
