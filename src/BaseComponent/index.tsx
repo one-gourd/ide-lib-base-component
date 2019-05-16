@@ -162,7 +162,7 @@ export const based = (
     // 采用 advanceMerge 合并默认值
     const { mergeRule = {} } = config;
     const mergedProps = advanceMerge(defaultProps, otherProps, {
-      ...mergeRule,
+      ...mergeRule
     });
 
     // 默认针对 styles、theme 做 1 级融合的处理,
@@ -171,7 +171,12 @@ export const based = (
     mergedProps.cWidth = convertSizeLiteral(cWidth || '100%');
     mergedProps.cHeight = convertSizeLiteral(cHeight || '100%');
 
-    debugRender('[based] 接收到的 props: %o', props);
+    debugRender(
+      '[based] 接收到的 props: %o ; mergeRule: %o; merge 后的内容: %o',
+      props,
+      mergeRule,
+      mergedProps
+    );
     return (
       <ThemeProvider theme={mergedProps.theme}>
         <WrappedComponent {...mergedProps} />
