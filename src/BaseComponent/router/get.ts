@@ -2,7 +2,10 @@
  * 获取 ctx 中挂载的 innerApps 对象
  * @param ctx - ctx 中间件对象
  */
-export const getInnerAppsMiddleware = function(ctx:any) {
+export const getInnerAppsMiddleware = function(ctx: any) {
+  console.warn(
+    '[标注废弃][getInnerAppsMiddleware] 该方法的存在不合理，并不能将 client 作为参数返回'
+  );
   const { innerApps } = ctx;
   const { name } = ctx.params;
 
@@ -25,4 +28,4 @@ export const getInnerAppsMiddleware = function(ctx:any) {
 
   ctx.response.body = result;
   ctx.response.status = 200;
-}
+};

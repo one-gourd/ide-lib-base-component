@@ -13,7 +13,7 @@ import { getValueByPath, advanceMerge, IMergeRule } from 'ide-lib-utils';
 import useComponentSize from '@rehooks/component-size';
 
 import { TAnyMSTModel } from './schema/stores';
-import { debugRender, debugModel } from '../lib/debug';
+import { debugRender, debugModel, debugError } from '../lib/debug';
 import { getDisplayName } from '../lib/util';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
@@ -172,7 +172,9 @@ export const based = (
     mergedProps.cHeight = convertSizeLiteral(cHeight || '100%');
 
     debugRender(
-      '[based] 接收到的 props: %o ; mergeRule: %o; merge 后的内容: %o',
+      `[based] [${getDisplayName(
+        WrappedComponent
+      )}] 接收到的 props: %o ; mergeRule: %o; merge 后的内容: %o`,
       props,
       mergeRule,
       mergedProps
@@ -337,4 +339,39 @@ export function addModelChangeListener(
       [model[key]]
     );
   });
+}
+
+/**
+ * 从 innerApps 中获取子组件的 client 对象
+ * 以前: const clientFnSets = innerApps.switchPanel.innerApps.fnSets.client;
+ * 现在: const clientFnSets = getSubClientFromInnerApps(innerApps, ['switchPanel', 'fnSets'])
+ *
+ * @param {Record<string, Application>} [innerApps]
+ * @param {(string | string[])} subNames
+ */
+export function getClientFromInnerApps(
+  innerApps: Record<string, Application>,
+  subNames?: string | string[]
+) {
+  if (!subNames) {
+    return;
+  }
+  const paths = [].concat(subNames);
+  let pathStr = '';
+  for (let index = 0; index < paths.length; index++) {
+    const name = paths[index];
+    pathStr += name;
+    if (index !== paths.length - 1) {
+      pathStr += '.innerApps.';
+    }
+  }
+  const clientPath = `${pathStr}.client`;
+  try {
+    return getValueByPath(innerApps, clientPath);
+  } catch (err) {
+    debugError(
+      `[getClientFromInnerApps] 执行 getValueByPath(${innerApps}, ${clientPath} 出错: %o`, err
+    );
+    return;
+  }
 }

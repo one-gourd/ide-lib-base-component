@@ -1,5 +1,10 @@
 import Chance from 'chance';
-import { JSONModel, IJSONModel, createJSONInstance } from '../../src';
+import {
+  JSONModel,
+  IJSONModel,
+  createJSONInstance,
+  getClientFromInnerApps
+} from '../../src';
 
 const chance = new Chance();
 
@@ -75,5 +80,83 @@ describe('[JSONModel] json model', () => {
     newObj.c = 2;
     jsonModel.setValue(newObj);
     expect(jsonModel.value.c).toEqual(2); // 整体替换才有效
+  });
+});
+
+describe('[getClientFromInnerApps] 从 innerApps 里获取 client', () => {
+  const mockInnerApps: any = {
+    switchPanel: {
+      client: 'switchPanelClient',
+      innerApps: {
+        fnSets: {
+          client: 'fnSetsClient',
+          innerApps: {
+            list: {
+              client: 'listSetsClient'
+            }
+          }
+        }
+      }
+    }
+  };
+
+  test('获取空数组', () => {
+    expect(getClientFromInnerApps(mockInnerApps, '')).toBeUndefined();
+  });
+
+  test('获取一级路径', () => {
+    expect(getClientFromInnerApps(mockInnerApps, 'switchPanel')).toBe(
+      'switchPanelClient'
+    );
+
+    expect(getClientFromInnerApps(mockInnerApps, ['switchPanel'])).toBe(
+      'switchPanelClient'
+    );
+
+    expect(
+      getClientFromInnerApps(mockInnerApps, [chance.word()])
+    ).toBeUndefined();
+  });
+  test('获取二级路径', () => {
+    expect(
+      getClientFromInnerApps(mockInnerApps, ['switchPanel', 'fnSets'])
+    ).toBe('fnSetsClient');
+
+    expect(
+      getClientFromInnerApps(mockInnerApps, ['switchPanel', chance.word()])
+    ).toBeUndefined();
+    expect(
+      getClientFromInnerApps(mockInnerApps, [chance.word(), chance.word()])
+    ).toBeUndefined();
+  });
+  test('获取三级路径', () => {
+    expect(
+      getClientFromInnerApps(mockInnerApps, ['switchPanel', 'fnSets', 'list'])
+    ).toBe('listSetsClient');
+
+    expect(
+      getClientFromInnerApps(mockInnerApps, [
+        'switchPanel',
+        'fnSets',
+        chance.word()
+      ])
+    ).toBeUndefined();
+    expect(
+      getClientFromInnerApps(mockInnerApps, [
+        'switchPanel',
+        chance.word(),
+        chance.word()
+      ])
+    ).toBeUndefined();
+
+    expect(
+      getClientFromInnerApps(mockInnerApps, [
+        chance.word(),
+        chance.word(),
+        chance.word()
+      ])
+    ).toBeUndefined();
+
+
   });
 });
