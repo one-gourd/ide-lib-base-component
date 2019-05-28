@@ -234,6 +234,20 @@ export interface IActionContext {
   context: { [key: string]: any };
 }
 
+/**
+ * 给指定的 props 事件回调增加额外的 behaviors
+ *  - 用于上层 solution 功能的实现
+ *  - 入参 `storesEnv` 并不起功能上的作用，只是将其回传给 solution，这样方便他们获取环境变量
+ *
+ * @export
+ * @template T
+ * @template K
+ * @param {IStoresEnv<K>} storesEnv - 最上层 storesEnv 对象
+ * @param {T} props - 属性对象
+ * @param {string} eventName - 事件回调名
+ * @param {TAnyFunction[]} behaviors - 其实就是 `solution`，在默认事件回调之前执行
+ * @returns
+ */
 export function injectBehavior<T extends Record<string, any>, K>(
   storesEnv: IStoresEnv<K>,
   props: T,

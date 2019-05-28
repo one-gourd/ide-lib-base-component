@@ -16,6 +16,7 @@
     "build-storybook": "build-storybook -c .storybook",
     "release": "npx standard-version",
     "dev": "webpack-dev-server --config webpack.dev.js",
+    "build:dev": "DEBUG=true webpack --config webpack.prod.js",
     "build": "webpack --config webpack.prod.js",
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
