@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.13](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.12...v0.1.13) (2019-05-28)
+
+
+### Features
+
+* 🎸 功能新增: getClientFromInnerApps ([c12c270](https://github.com/one-gourd/ide-lib-base-component/commit/c12c270))
+
+
+
 ## [0.1.12](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.11...v0.1.12) (2019-05-16)
 
 
