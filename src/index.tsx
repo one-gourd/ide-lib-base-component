@@ -18,6 +18,7 @@ export * from './BaseComponent/controller/util';
 
 export * from './BaseComponent/mods/';
 export * from './lib/util';
+export * from './lib/useDataFetch'
 
 /* ----------------------------------------------------
     公共外部组件
