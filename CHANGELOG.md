@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.15](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.14...v0.1.15) (2019-07-03)
+
+
+### Features
+
+* 🎸 功能新增: cstate 相关的 get/put 中间件 ([9232263](https://github.com/one-gourd/ide-lib-base-component/commit/9232263))
+
+
+
 ## [0.1.14](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.13...v0.1.14) (2019-07-01)
 
 
