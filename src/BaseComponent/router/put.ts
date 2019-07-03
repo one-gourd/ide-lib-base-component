@@ -1,5 +1,6 @@
 import { IContext } from 'ette';
-import { isPlainObject, getValueByPath } from "ide-lib-utils";
+import { isPlainObject, getValueByPath, mergeWithLevel } from "ide-lib-utils";
+
 import { buildNormalResponse} from './util';
 
 /**
@@ -59,5 +60,45 @@ export const updateThemeMiddleware = (themeModelPath: string) => (ctx: IContext)
   }
 
   buildNormalResponse(ctx, 200, { success, origin }, success ? `theme.[${target}] 从 ${origin} -> ${value} 的变更: ${success}.` : message);
-
 }
+
+
+interface IAnyObject {
+  [key: string]: any
+}
+
+/**
+ * 更新 cstate 的中间件
+ * @param ctx IContext - ette 上下文对象
+ */
+export const updateCStateMiddleware = function (ctx: IContext) {
+  const { _cstate = {}, request } = ctx;
+  const { name, value, mergeLevel = 0 } = request.data;
+
+  let isSuccess = true;
+  if (!name) {
+    isSuccess = false;
+    buildNormalResponse(
+      ctx,
+      200,
+      { isSuccess: false },
+      `属性名不能为空`
+    );
+  }
+  if (isSuccess) {
+    //   stores.setSchema(createSchemaModel(schema));
+    const originValue: IAnyObject = {};
+    originValue[name] = _cstate[name]; // 原始值
+    const targetValue: IAnyObject = {};
+    targetValue[name] = value;
+    const mergeResult = mergeWithLevel(originValue, targetValue, mergeLevel + 1);
+    // 更新 _cstate
+    _cstate[name] = mergeResult[name];
+    buildNormalResponse(
+      ctx,
+      200,
+      { isSuccess: true, name: name, origin: originValue[name], result: mergeResult[name] },
+      `状态属性 ${name} 的值从 ${originValue} -> ${mergeResult} 的变更`
+    );
+  }
+};
