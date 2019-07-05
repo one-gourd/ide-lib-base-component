@@ -39,6 +39,12 @@ export interface IBaseComponentEvent {
    * 当指定的 model 有更改的时候
    */
   onModelChange?: TModelChangeHandler;
+
+/**
+* 当组件尺寸发生改变会触发的回调
+*/
+  onCSizeChange?: TFnSizeChange;
+
 }
 
 export interface IBaseComponentProps extends IBaseComponentEvent {
@@ -118,6 +124,17 @@ export function useSizeArea(ref: React.RefObject<any>) {
   }, [componentSize, ref]);
 
   return areaSize;
+}
+
+export type TFnSizeChange = (size: ISizeArea['size']) => void;
+export function useSizeChange(
+  ref: React.RefObject<any>,
+  onCSizeChange: TFnSizeChange
+) {
+  const { width, height } = useComponentSize(ref);
+  useEffect(() => {
+    onCSizeChange && onCSizeChange({ width, height })
+  }, [width, height]);
 }
 
 /**
