@@ -7,6 +7,7 @@ import {
   SnapshotOrInstance
 } from 'mobx-state-tree';
 
+import { convertIfNumberic } from 'ide-lib-utils';
 import React from 'react';
 import { IBaseStyles } from '../index';
 import { createJSONInstance } from './util';
@@ -122,6 +123,14 @@ export const BaseModel = types
     return {
       setTheme(theme: SnapshotOrInstance<typeof self._theme>) {
         self._theme = cast(theme);
+      },
+
+      setCWidth(val: string | number) {
+        self.cWidth = convertIfNumberic(val);
+      },
+
+      setCHeight(val: string | number) {
+        self.cHeight = convertIfNumberic(val);
       },
 
       // 生成一个新的 style

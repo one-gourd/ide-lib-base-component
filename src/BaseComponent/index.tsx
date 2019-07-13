@@ -9,7 +9,12 @@ import Application, { Client } from 'ette';
 import { reaction } from 'mobx';
 import { useDisposable } from 'mobx-react-lite';
 import { ThemeProvider } from 'styled-components';
-import { getValueByPath, advanceMerge, IMergeRule } from 'ide-lib-utils';
+import {
+  getValueByPath,
+  advanceMerge,
+  IMergeRule,
+  convertIfNumberic
+} from 'ide-lib-utils';
 import useComponentSize from '@rehooks/component-size';
 
 import { TAnyMSTModel } from './schema/stores';
@@ -40,11 +45,10 @@ export interface IBaseComponentEvent {
    */
   onModelChange?: TModelChangeHandler;
 
-/**
-* 当组件尺寸发生改变会触发的回调
-*/
+  /**
+   * 当组件尺寸发生改变会触发的回调
+   */
   onCSizeChange?: TFnSizeChange;
-
 }
 
 export interface IBaseComponentProps extends IBaseComponentEvent {
@@ -133,19 +137,8 @@ export function useSizeChange(
 ) {
   const { width, height } = useComponentSize(ref);
   useEffect(() => {
-    onCSizeChange && onCSizeChange({ width, height })
+    onCSizeChange && onCSizeChange({ width, height });
   }, [width, height]);
-}
-
-/**
- * 统一转换尺寸字面量，比如将 '80' 转换成 80, ’80%‘、’auto‘ 就原值返回
- */
-function convertSizeLiteral(w: any) {
-  if (isNaN(w as any)) {
-    return w;
-  } else {
-    return Number(w);
-  }
 }
 
 export interface IBaseConfig {
@@ -185,8 +178,8 @@ export const based = (
     // 默认针对 styles、theme 做 1 级融合的处理,
     mergedProps.styles = Object.assign({}, defaultProps.styles || {}, styles);
     mergedProps.theme = Object.assign({}, defaultProps.theme || {}, theme);
-    mergedProps.cWidth = convertSizeLiteral(cWidth || '100%');
-    mergedProps.cHeight = convertSizeLiteral(cHeight || '100%');
+    mergedProps.cWidth = convertIfNumberic(cWidth || '100%');
+    mergedProps.cHeight = convertIfNumberic(cHeight || '100%');
 
     debugRender(
       `[based] [${getDisplayName(
@@ -401,7 +394,8 @@ export function getClientFromInnerApps(
     return getValueByPath(innerApps, clientPath);
   } catch (err) {
     debugError(
-      `[getClientFromInnerApps] 执行 getValueByPath(${innerApps}, ${clientPath} 出错: %o`, err
+      `[getClientFromInnerApps] 执行 getValueByPath(${innerApps}, ${clientPath} 出错: %o`,
+      err
     );
     return;
   }
