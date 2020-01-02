@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.17](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.16...v0.1.17) (2020-01-02)
+
+
+### Features
+
+* 🎸 功能新增: 新增路由染色(dyer)功能 ([b6418cc](https://github.com/one-gourd/ide-lib-base-component/commit/b6418cc))
+
+
+
 ## [0.1.16](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.15...v0.1.16) (2019-07-13)
 
 
