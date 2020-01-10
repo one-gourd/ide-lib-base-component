@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.18](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.17...v0.1.18) (2020-01-10)
+
+
+### Features
+
+* 🎸 功能新增: copyToClipboard 方法 ([4402e54](https://github.com/one-gourd/ide-lib-base-component/commit/4402e54))
+
+
+
 ## [0.1.17](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.16...v0.1.17) (2020-01-02)
 
 
