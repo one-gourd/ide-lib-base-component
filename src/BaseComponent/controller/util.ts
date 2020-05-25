@@ -1,6 +1,6 @@
 import Application, { middlewareFunction } from 'ette';
 import proxy from 'ette-proxy';
-import { message } from 'antd';
+// import { message } from 'antd';
 
 import { debugIO, debugError } from '../../lib/debug';
 import { invariant } from 'ide-lib-utils';
@@ -231,7 +231,7 @@ export function hasEtteException(
     // 有关键词才显示提示
     if (!!keywords) {
       keywords = [].concat(keywords);
-      message.info(`${msg} 关键词 [${keywords.join(' ')}]`);
+      console.info(`${msg} 关键词 [${keywords.join(' ')}]`);
     }
     return true;
   } else {
