@@ -1,6 +1,18 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [0.1.19](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.18...v0.1.19) (2021-08-10)
+
+
+### Features
+
+* 🎸 去 antd 化 ([f4c6a3d](https://github.com/one-gourd/ide-lib-base-component/commit/f4c6a3dfc7cd11d11a812511b6fdf67727b534a2))
+
+
+### Bug Fixes
+
+* 🐛 remove antd version ([8a84382](https://github.com/one-gourd/ide-lib-base-component/commit/8a843829cf66fa9f5a9ebf718c9e9d9f08f99b48))
 
 ## [0.1.18](https://github.com/one-gourd/ide-lib-base-component/compare/v0.1.17...v0.1.18) (2020-01-10)
 
