@@ -1,6 +1,5 @@
 import Application, { middlewareFunction } from 'ette';
 import proxy from 'ette-proxy';
-// import { message } from 'antd';
 
 import { debugIO, debugError } from '../../lib/debug';
 import { invariant } from 'ide-lib-utils';

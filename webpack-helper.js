@@ -29,7 +29,6 @@ const COMMON_EXTERNALS = {
     amd: 'react-dom',
     root: 'ReactDOM'
   },
-  antd: 'antd',
   mobx: 'mobx',
   'mobx-react': {
     commonjs: 'mobx-react',
